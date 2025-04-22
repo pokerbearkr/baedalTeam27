@@ -1,4 +1,4 @@
-package org.example.baedalteam27.user;
+package org.example.baedalteam27.domain.user;
 
 public enum UserRole {
 	USER,   // 일반 사용자
