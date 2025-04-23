@@ -6,7 +6,6 @@ import org.example.baedalteam27.domain.category.dto.CategoryResponseDto;
 import org.example.baedalteam27.domain.category.dto.FindCategoriesResponseDto;
 import org.example.baedalteam27.domain.category.dto.UpdateCategoryRequestDto;
 import org.example.baedalteam27.domain.category.service.CategoryService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,4 +40,9 @@ public class CategoryController {
     }
 
     // 카테고리 삭제
+    @DeleteMapping("{categoryid}")
+    public ResponseEntity<Void> deleteCategory (@PathVariable Long categoryid) {
+        categoryService.deleteCategory(categoryid);
+        return ResponseEntity.ok().build();
+    }
 }
