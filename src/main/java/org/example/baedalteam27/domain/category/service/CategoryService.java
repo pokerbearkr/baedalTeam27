@@ -42,4 +42,10 @@ public class CategoryService {
     }
 
     // 카테고리 삭제
+    public void deleteCategory(Long categoryid) {
+        Category category = categoryRepository.findCategoryById(categoryid)
+                .orElseThrow(() -> new IllegalArgumentException("카테고리가 존재하지 않습니다."));
+
+        categoryRepository.delete(category);
+    }
 }
