@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.example.baedalteam27.domain.auth.dto.LoginRequestDto;
 import org.example.baedalteam27.domain.auth.dto.MailCheckRequestDto;
 import org.example.baedalteam27.domain.auth.dto.MailCheckResponseDto;
+import org.example.baedalteam27.domain.auth.dto.PasswordChangeRequestDto;
+import org.example.baedalteam27.domain.auth.dto.PasswordChangeResponseDto;
 import org.example.baedalteam27.domain.auth.dto.SignupRequestDto;
 import org.example.baedalteam27.domain.auth.dto.WithdrawRequestDto;
 import org.example.baedalteam27.domain.auth.service.AuthService;
@@ -45,6 +47,15 @@ public class AuthController {
 	@PostMapping("/mail-check")
 	public ResponseEntity<MailCheckResponseDto> mailCheck(@RequestBody MailCheckRequestDto dto) {
 		MailCheckResponseDto response = authService.mailCheck(dto);
+		return ResponseEntity.ok(response);
+	}
+
+	@PatchMapping("/password")
+	public ResponseEntity<PasswordChangeResponseDto> passwordChange(
+		@LoginUser Long userId,
+		@RequestBody PasswordChangeRequestDto dto
+	) {
+		PasswordChangeResponseDto response = authService.passwordChange(userId, dto);
 		return ResponseEntity.ok(response);
 	}
 
