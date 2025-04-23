@@ -4,7 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.example.baedalteam27.domain.category.dto.CategoryRequestDto;
 import org.example.baedalteam27.domain.category.dto.CategoryResponseDto;
 import org.example.baedalteam27.domain.category.dto.FindCategoriesResponseDto;
+import org.example.baedalteam27.domain.category.dto.UpdateCategoryRequestDto;
 import org.example.baedalteam27.domain.category.service.CategoryService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,6 +34,11 @@ public class CategoryController {
     }
 
     // 카테고리 수정
+    @PatchMapping("{categoryid}")
+    public ResponseEntity<Void> updateCategory (@PathVariable Long categoryid, @RequestBody UpdateCategoryRequestDto requestDto) {
+        categoryService.updateCategory(categoryid, requestDto);
+        return ResponseEntity.ok().build();
+    }
 
     // 카테고리 삭제
 }
