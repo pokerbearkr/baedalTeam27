@@ -1,7 +1,7 @@
 package org.example.baedalteam27.domain.store.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.example.baedalteam27.domain.store.dto.request.FindStoreRequestDto;
+
 import org.example.baedalteam27.domain.store.dto.request.SaveStoreRequestDto;
 import org.example.baedalteam27.domain.store.dto.request.UpdateStoreRequestDto;
 import org.example.baedalteam27.domain.store.dto.response.SaveStoreResponseDto;
@@ -19,51 +19,62 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("api/stores")
+@RequestMapping()
 @RequiredArgsConstructor
 public class StoreController {
 
     private final StoreService storeService;
 
     // 가게 등록
-    @PostMapping
-    public ResponseEntity<SaveStoreResponseDto> saveStore (@LoginUser User loginUser, @RequestBody SaveStoreRequestDto requestDto) {
-        SaveStoreResponseDto saveStoreResponseDto = storeService.saveStore(loginUser, requestDto);
+    @PostMapping("api/categories/{categoryid}/stores")
+    public ResponseEntity<SaveStoreResponseDto> saveStore (
+            @LoginUser User loginUser,
+            @RequestBody SaveStoreRequestDto requestDto,
+            @PathVariable Long categoryid
+    ) {
+        SaveStoreResponseDto saveStoreResponseDto = storeService.saveStore(loginUser, requestDto, categoryid);
         return ResponseEntity.ok(saveStoreResponseDto);
     }
 
-    // 가게 전체 리스트 조회
-    @GetMapping
+    // 가게 전체 리스트 조회 (카테고리에 해당하는 가게명 또는 입력받은 단어가 들어가는 가게명)
+    @GetMapping("api/stores")
     public ResponseEntity<Page<StoreNameResponseDto>> findStores (
-            @RequestBody FindStoreRequestDto requestDto,
+            @RequestParam Long categoryId,
+            @RequestParam String storeName,
             @PageableDefault(direction = Sort.Direction.ASC, sort = "storeName") Pageable pageable
     ) {
-        Page<StoreNameResponseDto> storeNameResponseDto = storeService.findStores(requestDto, pageable);
+        Page<StoreNameResponseDto> storeNameResponseDto = storeService.findStores(categoryId, storeName, pageable);
         return ResponseEntity.ok(storeNameResponseDto);
     }
 
-    // 가게 단건 조회
-    @GetMapping
-    public ResponseEntity<StoreResponseDto> findStore (@RequestParam String storeName) {
-        StoreResponseDto store = storeService.findStore(storeName);
+    // 가게 단건 조회(카테고리에 해당하는 가게 또는 전체 가게들 중 하나의 가게 조회)
+    @GetMapping("api/stores/{storeid}")
+    public ResponseEntity<StoreResponseDto> findStore (
+            @RequestParam Long categoryid,
+            @PathVariable Long storeid
+    ) {
+        StoreResponseDto store = storeService.findStore(categoryid, storeid);
         return ResponseEntity.ok(store);
     }
 
     // 가게 수정
-    @PatchMapping
+    @PatchMapping("api/stores/{storeid}")
     public ResponseEntity<Void> updateStore (
             @LoginUser Long userId,
-            @RequestParam String storeName,
-            @RequestBody UpdateStoreRequestDto requestDto
+            @RequestBody UpdateStoreRequestDto requestDto,
+            @PathVariable Long storeid
     ) {
-        storeService.updateStore(userId, storeName, requestDto);
+        storeService.updateStore(userId, requestDto, storeid);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     // 가게 폐업
-    @DeleteMapping
-    public ResponseEntity<Void> deleteStore (@RequestParam String storeName, @LoginUser User loginUser) {
-        storeService.deleteStore(storeName, loginUser);
+    @DeleteMapping("api/stores/{storeid}")
+    public ResponseEntity<Void> deleteStore (
+            @LoginUser User loginUser,
+            @PathVariable Long storeid
+    ) {
+        storeService.deleteStore(loginUser, storeid);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
