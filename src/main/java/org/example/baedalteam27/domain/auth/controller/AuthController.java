@@ -2,6 +2,8 @@ package org.example.baedalteam27.domain.auth.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.example.baedalteam27.domain.auth.dto.LoginRequestDto;
+import org.example.baedalteam27.domain.auth.dto.MailCheckRequestDto;
+import org.example.baedalteam27.domain.auth.dto.MailCheckResponseDto;
 import org.example.baedalteam27.domain.auth.dto.SignupRequestDto;
 import org.example.baedalteam27.domain.auth.dto.WithdrawRequestDto;
 import org.example.baedalteam27.domain.auth.service.AuthService;
@@ -39,4 +41,11 @@ public class AuthController {
 		authService.withdraw(userId, dto.getPassword());
 		return ResponseEntity.ok().build();
 	}
+
+	@PostMapping("/mail-check")
+	public ResponseEntity<MailCheckResponseDto> mailCheck(@RequestBody MailCheckRequestDto dto) {
+		MailCheckResponseDto response = authService.mailCheck(dto);
+		return ResponseEntity.ok(response);
+	}
+
 }

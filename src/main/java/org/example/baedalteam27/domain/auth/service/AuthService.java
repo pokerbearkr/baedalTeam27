@@ -2,12 +2,13 @@ package org.example.baedalteam27.domain.auth.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.baedalteam27.domain.auth.dto.LoginRequestDto;
+import org.example.baedalteam27.domain.auth.dto.MailCheckRequestDto;
+import org.example.baedalteam27.domain.auth.dto.MailCheckResponseDto;
 import org.example.baedalteam27.domain.auth.dto.SignupRequestDto;
 import org.example.baedalteam27.domain.user.entitiy.User;
 import org.example.baedalteam27.domain.user.repository.UserRepository;
 import org.example.baedalteam27.global.config.PasswordEncoder;
 import org.example.baedalteam27.global.jwt.JwtProvider;
-import org.example.baedalteam27.global.jwt.LoginUser;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -63,6 +64,20 @@ public class AuthService {
 		user.setIsDeleted(true);
 		user.setUpdatedAt(LocalDateTime.now());
 	}
+
+	public MailCheckResponseDto mailCheck(MailCheckRequestDto dto) {
+		if (!isValidEmail(dto.getEmail())) {
+			throw new IllegalArgumentException("올바른 이메일 형식이 아닙니다.");
+		}
+
+		boolean exists = userRepository.existsByEmail(dto.getEmail());
+		if (exists) {
+			return new MailCheckResponseDto(false, "이미 존재하는 이메일입니다.");
+		}
+
+		return new MailCheckResponseDto(true, "사용 가능한 이메일입니다.");
+	}
+	// Redis 임시저장
 
 	private boolean isValidEmail(String email) {
 		return email.matches("^[A-Za-z0-9+_.-]+@(.+)$");
