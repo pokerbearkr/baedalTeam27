@@ -19,7 +19,7 @@ public class JwtProvider {
 		this.key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 	}
 
-	// ✅ 토큰 생성
+	// 토큰 생성
 	public String createToken(Long userId, String role) {
 		return Jwts.builder()
 			.setSubject(userId.toString())
@@ -30,17 +30,17 @@ public class JwtProvider {
 			.compact();
 	}
 
-	// ✅ 토큰에서 userId 꺼내기
+	// 토큰에서 userId 꺼내기
 	public Long getUserIdFromToken(String token) {
 		return Long.parseLong(parseClaims(token).getBody().getSubject());
 	}
 
-	// ✅ 토큰에서 role 꺼내기
+	// 토큰에서 role 꺼내기
 	public String getRoleFromToken(String token) {
 		return parseClaims(token).getBody().get("role", String.class);
 	}
 
-	// ✅ 공통 Claims 파서
+	// 공통 Claims 파서
 	private Jws<Claims> parseClaims(String token) {
 		return Jwts.parserBuilder()
 			.setSigningKey(key)
