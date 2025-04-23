@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import org.example.baedalteam27.domain.auth.dto.LoginRequestDto;
 import org.example.baedalteam27.domain.auth.dto.MailCheckRequestDto;
 import org.example.baedalteam27.domain.auth.dto.MailCheckResponseDto;
+import org.example.baedalteam27.domain.auth.dto.PasswordChangeRequestDto;
+import org.example.baedalteam27.domain.auth.dto.PasswordChangeResponseDto;
 import org.example.baedalteam27.domain.auth.dto.SignupRequestDto;
 import org.example.baedalteam27.domain.user.entitiy.User;
 import org.example.baedalteam27.domain.user.repository.UserRepository;
@@ -78,6 +80,29 @@ public class AuthService {
 		return new MailCheckResponseDto(true, "사용 가능한 이메일입니다.");
 	}
 	// Redis 임시저장
+
+	// 비밀번호 변경
+	public PasswordChangeResponseDto passwordChange(Long userId, PasswordChangeRequestDto dto) {
+		User user = userRepository.findById(userId)
+			.orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
+		// 현재 비밀번호 일치 여부 확인
+		if (!passwordEncoder.matches(dto.getNowPassword(), user.getPassword())) {
+			throw new IllegalArgumentException("현재 비밀번호와 일치하지 않습니다.");
+		}
+
+		// 새 비밀번호 형식 확인
+		if (!isValidPassword(dto.getNewPassword())) {
+			throw new IllegalArgumentException("새 비밀번호 형식이 유효하지 않습니다.");
+		}
+
+		// 새 비밀번호 저장
+		user.setPassword(passwordEncoder.encode(dto.getNewPassword()));
+		user.setUpdatedAt(LocalDateTime.now());
+
+		return new PasswordChangeResponseDto("비밀번호가 성공적으로 변경되었습니다.");
+	}
+
 
 	private boolean isValidEmail(String email) {
 		return email.matches("^[A-Za-z0-9+_.-]+@(.+)$");
