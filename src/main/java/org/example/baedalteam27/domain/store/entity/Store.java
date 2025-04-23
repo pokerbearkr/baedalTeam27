@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.example.baedalteam27.domain.category.entity.Category;
 import org.example.baedalteam27.domain.store.enums.Status;
 import org.example.baedalteam27.domain.user.entitiy.User;
 import org.hibernate.annotations.SQLDelete;
