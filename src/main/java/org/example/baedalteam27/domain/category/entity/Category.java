@@ -20,4 +20,9 @@ public class Category {
     public Category (String name) {
         this.name = name;
     }
+
+    // 카테고리 수정
+    public void update(String name) {
+        this.name = name;
+    };
 }

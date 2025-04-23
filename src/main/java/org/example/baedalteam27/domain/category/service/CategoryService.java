@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.baedalteam27.domain.category.dto.CategoryRequestDto;
 import org.example.baedalteam27.domain.category.dto.CategoryResponseDto;
 import org.example.baedalteam27.domain.category.dto.FindCategoriesResponseDto;
+import org.example.baedalteam27.domain.category.dto.UpdateCategoryRequestDto;
 import org.example.baedalteam27.domain.category.entity.Category;
 import org.example.baedalteam27.domain.category.repository.CategoryRepository;
 import org.springframework.stereotype.Service;
@@ -33,6 +34,12 @@ public class CategoryService {
     }
 
     // 카테고리 수정
+    public void updateCategory(Long categoryid, UpdateCategoryRequestDto requestDto) {
+        Category category = categoryRepository.findCategoryById(categoryid)
+                .orElseThrow(() -> new IllegalArgumentException("카테고리가 존재하지 않습니다."));
+
+        category.update(requestDto.getName());
+    }
 
     // 카테고리 삭제
 }
