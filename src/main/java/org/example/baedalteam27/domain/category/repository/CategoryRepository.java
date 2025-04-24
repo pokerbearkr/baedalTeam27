@@ -8,5 +8,7 @@ import java.util.Optional;
 
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Long> {
-    Optional<Category> findCategoryById(Long categoryid);
+    default Category findByIdOrElseThrow(Long categoryid) {
+        return findById(categoryid).orElseThrow(() -> new IllegalArgumentException("카테고리가 존재 하지 않습니다."));
+    }
 }

@@ -20,4 +20,8 @@ public interface StoreRepository extends JpaRepository<Store, Long> {
     int countByUserIdAndIsDeletedFalse(Long userId);
 
     Page<Store> findByIsDeletedFalse(Pageable pageable);
+
+    default Store findByIdOrElseThrow(Long storeId) {
+        return findById(storeId).orElseThrow(() -> new IllegalArgumentException("가게가 존재하지 않습니다."));
+    }
 }
