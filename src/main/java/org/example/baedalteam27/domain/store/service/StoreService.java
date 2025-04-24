@@ -69,6 +69,7 @@ public class StoreService {
         return new SaveStoreResponseDto(
                 saveStore.getId(),
                 saveStore.getStoreName(),
+                category.getName(),
                 saveStore.getAddress(),
                 saveStore.getPhoneNumber(),
                 saveStore.getOpenTime(),
@@ -121,6 +122,7 @@ public class StoreService {
         return new StoreResponseDto(
                 store.getId(),
                 store.getStoreName(),
+                store.getCategory().getName(),
                 store.getAddress(),
                 store.getPhoneNumber(),
                 store.getOpenTime(),
