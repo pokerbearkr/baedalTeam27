@@ -33,12 +33,12 @@ public class StoreService {
 
 
     // 가게 등록
-    public SaveStoreResponseDto saveStore(Long userId, SaveStoreRequestDto requestDto, Long categoryId) {
+    public SaveStoreResponseDto saveStore(Long userId, SaveStoreRequestDto requestDto) {
         // 유저, 카테고리 조회
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("사용자가 존재하지 않습니다."));
 
-        Category category = categoryRepository.findById(categoryId)
+        Category category = categoryRepository.findById(requestDto.getCategoryId())
                 .orElseThrow(() -> new IllegalArgumentException("카테고리가 존재하지 않습니다."));
 
         // 유저가 사장님 권한을 가졌는지 검증
@@ -142,6 +142,10 @@ public class StoreService {
             throw new IllegalArgumentException("해당 가게에 대한 수정 권한이 없습니다.");
         }
 
+        // 카테고리 조회
+        Category category = categoryRepository.findById(requestDto.getCategoryId())
+                .orElseThrow(() -> new IllegalArgumentException("카테고리가 존재하지 않습니다."));
+
         // 가게 수정된 정보 저장
         store.update(
                 requestDto.getStoreName(),
@@ -149,7 +153,8 @@ public class StoreService {
                 requestDto.getPhoneNumber(),
                 requestDto.getOpenTime(),
                 requestDto.getClosedTime(),
-                requestDto.getMinOrderPrice()
+                requestDto.getMinOrderPrice(),
+                category
         );
     }
 
