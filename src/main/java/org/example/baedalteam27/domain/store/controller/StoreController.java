@@ -25,7 +25,7 @@ public class StoreController {
     private final StoreService storeService;
 
     // 가게 등록
-    @PostMapping("api/stores")
+    @PostMapping("/api/stores")
     public ResponseEntity<SaveStoreResponseDto> saveStore (
             @LoginUser Long userId,
             @RequestBody SaveStoreRequestDto requestDto
@@ -35,7 +35,7 @@ public class StoreController {
     }
 
     // 가게 전체 리스트 조회 (카테고리에 해당하는 가게명 또는 입력받은 단어가 들어가는 가게명)
-    @GetMapping("api/stores")
+    @GetMapping("/api/stores")
     public ResponseEntity<Page<StoreNameResponseDto>> findStores (
             @RequestParam(required = false) Long categoryId,
             @RequestParam(required = false) String storeName,
@@ -46,7 +46,7 @@ public class StoreController {
     }
 
     // 가게 단건 조회
-    @GetMapping("api/stores/{storeid}")
+    @GetMapping("/api/stores/{storeid}")
     public ResponseEntity<StoreResponseDto> findStore (
             @PathVariable Long storeid
     ) {
@@ -55,7 +55,7 @@ public class StoreController {
     }
 
     // 가게 수정
-    @PatchMapping("api/stores/{storeid}")
+    @PatchMapping("/api/stores/{storeid}")
     public ResponseEntity<Void> updateStore (
             @LoginUser Long userId,
             @RequestBody UpdateStoreRequestDto requestDto,
@@ -66,7 +66,7 @@ public class StoreController {
     }
 
     // 가게 폐업
-    @DeleteMapping("api/stores/{storeid}")
+    @DeleteMapping("/api/stores/{storeid}")
     public ResponseEntity<Void> deleteStore (
             @LoginUser Long userId,
             @PathVariable Long storeid
