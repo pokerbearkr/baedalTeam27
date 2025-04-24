@@ -4,11 +4,9 @@ import org.example.baedalteam27.domain.store.entity.Store;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-@Repository
 public interface StoreRepository extends JpaRepository<Store, Long> {
     // 가게가 폐업 상태가 아닌 가게만 조회, storeName 단어가 들어간 가게들 조회
     Page<Store> findByStoreNameContainingAndIsDeletedFalse(String storeName, Pageable pageable);
