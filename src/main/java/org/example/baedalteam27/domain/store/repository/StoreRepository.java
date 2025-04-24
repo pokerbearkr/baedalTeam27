@@ -13,14 +13,13 @@ public interface StoreRepository extends JpaRepository<Store, Long> {
     // 가게가 폐업 상태가 아닌 가게만 조회, storeName 단어가 들어간 가게들 조회
     Page<Store> findByStoreNameContainingAndIsDeletedFalse(String storeName, Pageable pageable);
 
+    // (N+1문제 @EntityGraph 사용할 예정)
     Optional<Store> findByIdAndIsDeletedFalse(Long storeId);
 
     // 카테고리Id로 가게 조회
     Page<Store> findByCategoryIdAndIsDeletedFalse(Long categoryId, Pageable pageable);
 
-    // 가게가 폐업 상태가 아닌 가게 조회
-    // (N+1문제 @EntityGraph 사용할 예정)
-    Optional<Store> findByCategoryIdAndIdAndIsDeletedFalse(Long categoryId, Long storeId);
+    int countByUserIdAndIsDeletedFalse(Long userId);
 
-    int countByUserId(Long userId);
+    Page<Store> findByIsDeletedFalse(Pageable pageable);
 }
