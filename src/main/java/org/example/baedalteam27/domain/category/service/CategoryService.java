@@ -55,8 +55,7 @@ public class CategoryService {
             throw new ForbiddenException("관리자 권한이 아닙니다.");
         }
 
-        Category category = categoryRepository.findCategoryById(categoryid)
-                .orElseThrow(() -> new IllegalArgumentException("카테고리가 존재하지 않습니다."));
+        Category category = categoryRepository.findByIdOrElseThrow(categoryid);
 
         // 이름 중복 검증
         if (requestDto.getName().equals(category.getName())) {
@@ -74,8 +73,7 @@ public class CategoryService {
             throw new ForbiddenException("관리자 권한이 아닙니다.");
         }
 
-        Category category = categoryRepository.findCategoryById(categoryid)
-                .orElseThrow(() -> new IllegalArgumentException("카테고리가 존재하지 않습니다."));
+        Category category = categoryRepository.findByIdOrElseThrow(categoryid);
 
         categoryRepository.delete(category);
     }
