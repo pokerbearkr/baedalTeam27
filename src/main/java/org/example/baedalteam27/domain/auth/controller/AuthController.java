@@ -1,5 +1,6 @@
 package org.example.baedalteam27.domain.auth.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.example.baedalteam27.domain.auth.dto.LoginRequestDto;
 import org.example.baedalteam27.domain.auth.dto.MailCheckRequestDto;
@@ -44,12 +45,14 @@ public class AuthController {
 		return ResponseEntity.ok().build();
 	}
 
+	// 메일 중복 체크
 	@PostMapping("/mail-check")
 	public ResponseEntity<MailCheckResponseDto> mailCheck(@RequestBody MailCheckRequestDto dto) {
 		MailCheckResponseDto response = authService.mailCheck(dto);
 		return ResponseEntity.ok(response);
 	}
 
+	// 비밀번호 변경
 	@PatchMapping("/password")
 	public ResponseEntity<PasswordChangeResponseDto> passwordChange(
 		@LoginUser Long userId,
@@ -57,6 +60,17 @@ public class AuthController {
 	) {
 		PasswordChangeResponseDto response = authService.passwordChange(userId, dto);
 		return ResponseEntity.ok(response);
+	}
+
+	// 로그아웃
+	@PostMapping("/logout")
+	public ResponseEntity<Void> logout(
+		@LoginUser Long userId,
+		HttpServletRequest request
+	) {
+		String token = request.getHeader("Authorization").replace("Bearer ", "");
+		authService.logout(token, userId);
+		return ResponseEntity.ok().build();
 	}
 
 }
