@@ -1,9 +1,11 @@
 package org.example.baedalteam27.domain.auth.dto;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 @Getter
+@RequiredArgsConstructor
 public class LoginRequestDto {
-	private String email;
-	private String password;
+	private final String email;
+	private final String password;
 }

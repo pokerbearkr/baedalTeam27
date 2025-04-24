@@ -2,10 +2,11 @@ package org.example.baedalteam27.domain.auth.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 @Getter
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class MailCheckResponseDto {
-	private boolean available;
-	private String message;
+	private final boolean available;
+	private final String message;
 }
