@@ -5,6 +5,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.example.baedalteam27.domain.user.entitiy.User;
+import org.example.baedalteam27.domain.store.entity.Store;
+
+
 
 import java.time.LocalDateTime;
 

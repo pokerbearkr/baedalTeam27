@@ -24,19 +24,26 @@ public class OrderController {
     }
 
     /*
-      주문 취소, 승인 등. 성공시 200 코드와 함꼐 변경한 상태(Enum) 반환
+      소비자 주문 취소/ 판매자 주문 승인, 거절. 성공시 200 코드와 함꼐 변경한 상태(Enum) 반환
      */
     @PostMapping
     public ResponseEntity<OrderStatus> orderStatusChange(@LoginUser Long userId, OrderStatus orderStatus){
         return ResponseEntity.ok(orderService.orderStatusChange(userId, orderStatus));
     }
-
+    /*
+    판매자용 api / 모든 요청상태인 주문 호출
+     */
     @GetMapping
     public ResponseEntity<ArrayList<OrderResponse>> getAllOrdersForStore(@LoginUser Long userId){
         return ResponseEntity.ok(orderService.getAllOrdersForStore(userId));
     }
+    /*
+    판매자, 소비자 공통 api / 주문
+     */
     @GetMapping
     public ResponseEntity<OrderResponse> getOneOrder(@LoginUser Long userId){
         return ResponseEntity.ok(orderService.getOneOrder(userId));
+
+
     }
 }

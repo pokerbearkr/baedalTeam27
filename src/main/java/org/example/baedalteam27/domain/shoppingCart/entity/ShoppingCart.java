@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.example.baedalteam27.domain.user.entitiy.User;
+import org.example.baedalteam27.domain.store.entity.Store;
+import org.example.baedalteam27.domain.menu.entity.Menu;
 
 @Entity
 @Getter @Setter
@@ -28,4 +30,11 @@ public class ShoppingCart {
 
     @Column(nullable = false)
     private int quantity;
+
+    public ShoppingCart(User user, Store store, Menu menu, int quantity){
+        this.user = user;
+        this.store = store;
+        this.menu = menu;
+        this.quantity = quantity;
+    }
 }

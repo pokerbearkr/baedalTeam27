@@ -4,8 +4,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.example.baedalteam27.domain.order.entity.Order;
+import org.example.baedalteam27.domain.menu.entity.Menu;
 
-import java.awt.*;
 
 @Entity
 @Getter @Setter

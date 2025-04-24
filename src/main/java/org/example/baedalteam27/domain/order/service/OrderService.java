@@ -6,11 +6,17 @@ import org.example.baedalteam27.domain.order.dto.response.OrderResponse;
 import org.example.baedalteam27.domain.order.entity.Order;
 import org.example.baedalteam27.domain.order.entity.OrderDetails;
 import org.example.baedalteam27.domain.order.entity.OrderStatus;
+import org.example.baedalteam27.domain.store.entity.Store;
 import org.example.baedalteam27.domain.order.repository.OrderDetailsRepository;
 import org.example.baedalteam27.domain.shoppingCart.entity.ShoppingCart;
 import org.example.baedalteam27.domain.shoppingCart.repository.ShoppingCartRepository;
 import org.example.baedalteam27.domain.order.repository.OrderRepository;
 import org.springframework.stereotype.Service;
+
+
+import org.example.baedalteam27.domain.store.repository.StoreRepository;
+
+
 
 
 import java.time.LocalDateTime;
@@ -36,6 +42,7 @@ public class OrderService {
         List<ShoppingCart> cart = shoppingCartRepository.findByUserIdWithStoreAndMenu(userId);
 
         // 주문 정보 저장
+        // ShoppingCart 는 User 와 Store 이 중복 저장돼있음 -> get(아무인덱스)
         Order order = new Order(cart.get(0).getUser(),
                 cart.get(0).getStore(),
                 deliveryLocation,
@@ -45,14 +52,14 @@ public class OrderService {
         orderRepository.save(order);
 
         // 상세 주문 저장
-        // 방금 저장한 주문의 칼럼 하나를 userId와 OrderStatus, 그리고 Limit 1로 찾음
+        // 방금 주문한 유일한 칼럼을 userId와 OrderStatus, 그리고 Limit 1로 찾음
         Order theOrder = orderRepository
                 .findLatestOrderByUserIdAndStatus(userId, OrderStatus.PENDING)
                 .orElseThrow(() -> new RuntimeException("주문이 없습니다."));
 
         ArrayList<OrderDetails> orderDetails = cart.stream()
-                .map(c -> new OrderDetails(theOrder, c.getMenu(), c.getQuantity())
-                        .collect(Collectors.toCollection(ArrayList::new)));
+                .map(c -> new OrderDetails(theOrder, c.getMenu(), c.getQuantity()))
+                .collect(Collectors.toCollection(ArrayList::new));
 
         //TODO: 시간나면 BATCH
         orderDetailsRepository.saveAll(orderDetails);
@@ -74,8 +81,7 @@ public class OrderService {
     }
 
     public ArrayList<OrderResponse> getAllOrdersForStore(Long userId){
-        Optional<Store> store = storeRepository.findByUserId(userId)
-                .orElseThrow(() -> new RuntimeException("가게가 없습니다."));
+        Store store = storeRepository.findByIdOrElseThrow(userId);
 
         List<Order> orders = orderRepository.findOrdersByStoreIdAndOrderStatus(store.getId(), OrderStatus.PENDING);
 
@@ -100,4 +106,6 @@ public class OrderService {
                 oneOrder.getOrderedTime(),
                 oneOrder.getOrderStatus());
     }
+
+    public
 }

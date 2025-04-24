@@ -1,6 +1,7 @@
 package org.example.baedalteam27.domain.shoppingCart.repository;
 
 import org.example.baedalteam27.domain.shoppingCart.entity.ShoppingCart;
+import org.example.baedalteam27.domain.user.entitiy.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -21,4 +22,8 @@ public interface ShoppingCartRepository extends JpaRepository<ShoppingCart,Long>
     @Modifying
     @Query("DELETE FROM ShoppingCart c WHERE c.user.id = :userId AND c.menu.id = :menuId")
     void deleteByUserIdAndMenuId(@Param("userId") Long userId, @Param("menuId") Long menuId);
+
+    @Modifying
+    @Query("DELETE FROM ShoppingCart c WHERE c.user.id = :userId")
+    void deleteAllByUserId(@Param("userId")Long userId);
 }
