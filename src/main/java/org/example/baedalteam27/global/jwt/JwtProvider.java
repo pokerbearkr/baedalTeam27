@@ -3,23 +3,31 @@ package org.example.baedalteam27.global.jwt;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
 
 @Component
+@RequiredArgsConstructor
 public class JwtProvider {
 
 	private Key key;
+
+	@Value("${jwt.secret}")
+	private String secret;
+
 	private final long EXPIRATION_TIME = 1000 * 60 * 60; // 1시간
 
 	@PostConstruct
 	public void init() {
-		this.key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
+		// properties에서 불러온 시크릿 키로 고정 키 생성
+		this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
 	}
 
-	// 토큰 생성
 	public String createToken(Long userId, String role) {
 		return Jwts.builder()
 			.setSubject(userId.toString())
@@ -30,21 +38,22 @@ public class JwtProvider {
 			.compact();
 	}
 
-	// 토큰에서 userId 꺼내기
 	public Long getUserIdFromToken(String token) {
 		return Long.parseLong(parseClaims(token).getBody().getSubject());
 	}
 
-	// 토큰에서 role 꺼내기
 	public String getRoleFromToken(String token) {
 		return parseClaims(token).getBody().get("role", String.class);
 	}
 
-	// 공통 Claims 파서
 	private Jws<Claims> parseClaims(String token) {
 		return Jwts.parserBuilder()
 			.setSigningKey(key)
 			.build()
 			.parseClaimsJws(token.replace("Bearer ", ""));
+	}
+
+	public long getExpiration(String token) {
+		return parseClaims(token).getBody().getExpiration().getTime() - System.currentTimeMillis();
 	}
 }
