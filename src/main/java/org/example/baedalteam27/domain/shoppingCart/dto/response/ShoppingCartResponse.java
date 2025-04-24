@@ -6,6 +6,9 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class ShoppingCartResponse {
+    private final Store store;
     private final Menu menu;
+    private final Menu price;
     private final int quantity;
+
 }

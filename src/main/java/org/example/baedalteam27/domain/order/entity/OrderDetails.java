@@ -1,7 +1,6 @@
 package org.example.baedalteam27.domain.order.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,7 +10,7 @@ import java.awt.*;
 @Entity
 @Getter @Setter
 @NoArgsConstructor
-public class OrderItems {
+public class OrderDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -21,7 +20,7 @@ public class OrderItems {
     private Order order;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "menu_id", unique = true)
+    @JoinColumn(name = "menu_id")
     private Menu menu;
 
     @Column(nullable = false)
@@ -29,4 +28,10 @@ public class OrderItems {
 
     //디폴트값 설정
     private Boolean isOrdered = false;
+
+    public OrderDetails(Order order, Menu menu, int quantity) {
+        this.order = order;
+        this.menu = menu;
+        this.quantity = quantity;
     }
+}

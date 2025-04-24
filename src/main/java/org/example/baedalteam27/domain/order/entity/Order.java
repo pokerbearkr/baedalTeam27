@@ -36,4 +36,13 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
 
+    //Order_id 뺀 생성자
+    public Order(User user, Store store, String location,
+          LocalDateTime orderedTime, OrderStatus orderStatus){
+        this.user = user;
+        this.store = store;
+        this.location = location;
+        this.orderedTime = orderedTime;
+        this.orderStatus = orderStatus;
+    }
 }
