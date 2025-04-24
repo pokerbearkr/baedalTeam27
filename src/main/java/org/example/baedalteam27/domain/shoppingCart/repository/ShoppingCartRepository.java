@@ -1,7 +1,6 @@
 package org.example.baedalteam27.domain.shoppingCart.repository;
 
 import org.example.baedalteam27.domain.shoppingCart.entity.ShoppingCart;
-import org.example.baedalteam27.domain.user.entitiy.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;

@@ -9,10 +9,9 @@ import org.example.baedalteam27.domain.store.enums.Status;
 import org.example.baedalteam27.domain.user.entitiy.User;
 import org.hibernate.annotations.SQLDelete;
 
-
+import java.awt.*;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @Entity
@@ -79,7 +78,7 @@ public class Store {
                   User user,
                   Category category
                   List<Menu> menus
-                  ) {
+    ) {
         this.storeName = storeName;
         this.address = address;
         this.phoneNumber = phoneNumber;
