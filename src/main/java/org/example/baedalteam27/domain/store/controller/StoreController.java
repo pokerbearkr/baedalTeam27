@@ -1,14 +1,13 @@
 package org.example.baedalteam27.domain.store.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.example.baedalteam27.domain.store.dto.request.FindStoreRequestDto;
+
 import org.example.baedalteam27.domain.store.dto.request.SaveStoreRequestDto;
 import org.example.baedalteam27.domain.store.dto.request.UpdateStoreRequestDto;
 import org.example.baedalteam27.domain.store.dto.response.SaveStoreResponseDto;
 import org.example.baedalteam27.domain.store.dto.response.StoreNameResponseDto;
 import org.example.baedalteam27.domain.store.dto.response.StoreResponseDto;
 import org.example.baedalteam27.domain.store.service.StoreService;
-import org.example.baedalteam27.domain.user.entitiy.User;
 import org.example.baedalteam27.global.jwt.LoginUser;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,51 +18,61 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("api/stores")
+@RequestMapping()
 @RequiredArgsConstructor
 public class StoreController {
 
     private final StoreService storeService;
 
     // 가게 등록
-    @PostMapping
-    public ResponseEntity<SaveStoreResponseDto> saveStore (@LoginUser User loginUser, @RequestBody SaveStoreRequestDto requestDto) {
-        SaveStoreResponseDto saveStoreResponseDto = storeService.saveStore(loginUser, requestDto);
+    @PostMapping("api/categories/{categoryid}/stores")
+    public ResponseEntity<SaveStoreResponseDto> saveStore (
+            @LoginUser Long userId,
+            @RequestBody SaveStoreRequestDto requestDto,
+            @PathVariable Long categoryid
+    ) {
+        SaveStoreResponseDto saveStoreResponseDto = storeService.saveStore(userId, requestDto, categoryid);
         return ResponseEntity.ok(saveStoreResponseDto);
     }
 
-    // 가게 전체 리스트 조회
-    @GetMapping
+    // 가게 전체 리스트 조회 (카테고리에 해당하는 가게명 또는 입력받은 단어가 들어가는 가게명)
+    @GetMapping("api/stores")
     public ResponseEntity<Page<StoreNameResponseDto>> findStores (
-            @RequestBody FindStoreRequestDto requestDto,
+            @RequestParam(required = false) Long categoryId,
+            @RequestParam(required = false) String storeName,
             @PageableDefault(direction = Sort.Direction.ASC, sort = "storeName") Pageable pageable
     ) {
-        Page<StoreNameResponseDto> storeNameResponseDto = storeService.findStores(requestDto, pageable);
+        Page<StoreNameResponseDto> storeNameResponseDto = storeService.findStores(categoryId, storeName, pageable);
         return ResponseEntity.ok(storeNameResponseDto);
     }
 
     // 가게 단건 조회
-    @GetMapping
-    public ResponseEntity<StoreResponseDto> findStore (@RequestParam String storeName) {
-        StoreResponseDto store = storeService.findStore(storeName);
+    @GetMapping("api/stores/{storeid}")
+    public ResponseEntity<StoreResponseDto> findStore (
+            @PathVariable Long storeid
+    ) {
+        StoreResponseDto store = storeService.findStore(storeid);
         return ResponseEntity.ok(store);
     }
 
     // 가게 수정
-    @PatchMapping
+    @PatchMapping("api/stores/{storeid}")
     public ResponseEntity<Void> updateStore (
             @LoginUser Long userId,
-            @RequestParam String storeName,
-            @RequestBody UpdateStoreRequestDto requestDto
+            @RequestBody UpdateStoreRequestDto requestDto,
+            @PathVariable Long storeid
     ) {
-        storeService.updateStore(userId, storeName, requestDto);
+        storeService.updateStore(userId, requestDto, storeid);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     // 가게 폐업
-    @DeleteMapping
-    public ResponseEntity<Void> deleteStore (@RequestParam String storeName, @LoginUser User loginUser) {
-        storeService.deleteStore(storeName, loginUser);
+    @DeleteMapping("api/stores/{storeid}")
+    public ResponseEntity<Void> deleteStore (
+            @LoginUser Long userId,
+            @PathVariable Long storeid
+    ) {
+        storeService.deleteStore(userId, storeid);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
