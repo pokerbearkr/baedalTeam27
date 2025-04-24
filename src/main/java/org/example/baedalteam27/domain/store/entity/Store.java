@@ -100,7 +100,8 @@ public class Store {
                        String phoneNumber,
                        LocalTime openTime,
                        LocalTime closedTime,
-                       Long minOrderPrice
+                       Long minOrderPrice,
+                       Category category
     ) {
         this.storeName = storeName;
         this.address = address;
@@ -108,6 +109,7 @@ public class Store {
         this.openTime = openTime;
         this.closedTime = closedTime;
         this.minOrderPrice = minOrderPrice;
+        this.category = category;
     }
 
     // 가게 운영 상태
