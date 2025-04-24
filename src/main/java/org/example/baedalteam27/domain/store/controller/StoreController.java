@@ -25,13 +25,12 @@ public class StoreController {
     private final StoreService storeService;
 
     // 가게 등록
-    @PostMapping("api/categories/{categoryid}/stores")
+    @PostMapping("api/stores")
     public ResponseEntity<SaveStoreResponseDto> saveStore (
             @LoginUser Long userId,
-            @RequestBody SaveStoreRequestDto requestDto,
-            @PathVariable Long categoryid
+            @RequestBody SaveStoreRequestDto requestDto
     ) {
-        SaveStoreResponseDto saveStoreResponseDto = storeService.saveStore(userId, requestDto, categoryid);
+        SaveStoreResponseDto saveStoreResponseDto = storeService.saveStore(userId, requestDto);
         return ResponseEntity.ok(saveStoreResponseDto);
     }
 
