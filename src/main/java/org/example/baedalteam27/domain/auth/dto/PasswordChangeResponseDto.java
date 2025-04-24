@@ -3,9 +3,10 @@ package org.example.baedalteam27.domain.auth.dto;
 import lombok.Getter;
 
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @Getter
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class PasswordChangeResponseDto {
-	private String message;
+	private final String message;
 }
