@@ -104,14 +104,13 @@ public class StoreService {
 
     // 가게 단건 조회
     public StoreResponseDto findStore(Long storeId) {
-        Store store; // 변수 선언
         // 필수값 검증
         if (storeId == null) {
             throw new IllegalArgumentException("가게 번호는 필수!");
         }
 
         // 전체에서 가게 조회
-        store = storeRepository.findByIdAndIsDeletedFalse(storeId)
+        Store store = storeRepository.findByIdAndIsDeletedFalse(storeId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 이름의 가게를 찾을 수 없습니다."));
 
         // 메뉴를 MenuResponseDto에 담고 리스트로 변환 (N+1 문제 해결 예정)
