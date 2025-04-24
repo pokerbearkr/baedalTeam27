@@ -8,15 +8,17 @@ import java.time.LocalTime;
 public class SaveStoreResponseDto {
     private final Long id;
     private final String storeName;
+    private final String categoryName;
     private final String address;
     private final String phoneNumber;
     private final LocalTime openTime;
     private final LocalTime closedTime;
     private final Long minOrderPrice;
 
-    public SaveStoreResponseDto(Long id, String storeName, String address, String phoneNumber, LocalTime openTime, LocalTime closedTime, Long minOrderPrice) {
+    public SaveStoreResponseDto(Long id, String storeName, String categoryName, String address, String phoneNumber, LocalTime openTime, LocalTime closedTime, Long minOrderPrice) {
         this.id = id;
         this.storeName = storeName;
+        this.categoryName = categoryName;
         this.address = address;
         this.phoneNumber = phoneNumber;
         this.openTime = openTime;

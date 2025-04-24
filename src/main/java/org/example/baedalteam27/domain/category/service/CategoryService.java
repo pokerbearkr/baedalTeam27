@@ -8,6 +8,9 @@ import org.example.baedalteam27.domain.category.dto.request.UpdateCategoryReques
 import org.example.baedalteam27.domain.category.entity.Category;
 import org.example.baedalteam27.domain.category.repository.CategoryRepository;
 import org.example.baedalteam27.domain.user.UserRole;
+import org.example.baedalteam27.domain.user.entitiy.User;
+import org.example.baedalteam27.domain.user.repository.UserRepository;
+import org.example.baedalteam27.global.exception.ForbiddenException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,12 +21,14 @@ import java.util.stream.Collectors;
 public class CategoryService {
 
     private final CategoryRepository categoryRepository;
+    private final UserRepository userRepository;
 
     // 카테고리 생성
-    public CategoryResponseDto saveCategory(CategoryRequestDto requestDto, String role) {
+    public CategoryResponseDto saveCategory(CategoryRequestDto requestDto, Long userId) {
+        User user = userRepository.getUserByUserId(userId);
         // 권한 확인
-        if (!role.equals(UserRole.ADMIN.toString())) {
-            throw new IllegalArgumentException("관리자 권한이 아닙니다.");
+        if (!user.getRole().equals(UserRole.ADMIN)) {
+            throw new ForbiddenException("관리자 권한이 아닙니다.");
         }
 
         Category category = new Category(requestDto.getName());
@@ -43,14 +48,14 @@ public class CategoryService {
     }
 
     // 카테고리 수정
-    public void updateCategory(Long categoryid, UpdateCategoryRequestDto requestDto, String role) {
+    public void updateCategory(Long categoryid, UpdateCategoryRequestDto requestDto, Long userId) {
+        User user = userRepository.getUserByUserId(userId);
         // 권한 확인
-        if (!role.equals(UserRole.ADMIN.toString())) {
-            throw new IllegalArgumentException("관리자 권한이 아닙니다.");
+        if (!user.getRole().equals(UserRole.ADMIN)) {
+            throw new ForbiddenException("관리자 권한이 아닙니다.");
         }
 
-        Category category = categoryRepository.findCategoryById(categoryid)
-                .orElseThrow(() -> new IllegalArgumentException("카테고리가 존재하지 않습니다."));
+        Category category = categoryRepository.findByIdOrElseThrow(categoryid);
 
         // 이름 중복 검증
         if (requestDto.getName().equals(category.getName())) {
@@ -61,14 +66,14 @@ public class CategoryService {
     }
 
     // 카테고리 삭제
-    public void deleteCategory(Long categoryid, String role) {
+    public void deleteCategory(Long categoryid, Long userId) {
+        User user = userRepository.getUserByUserId(userId);
         // 권한 확인
-        if (!role.equals(UserRole.ADMIN.toString())) {
-            throw new IllegalArgumentException("관리자 권한이 아닙니다.");
+        if (!user.getRole().equals(UserRole.ADMIN)) {
+            throw new ForbiddenException("관리자 권한이 아닙니다.");
         }
 
-        Category category = categoryRepository.findCategoryById(categoryid)
-                .orElseThrow(() -> new IllegalArgumentException("카테고리가 존재하지 않습니다."));
+        Category category = categoryRepository.findByIdOrElseThrow(categoryid);
 
         categoryRepository.delete(category);
     }

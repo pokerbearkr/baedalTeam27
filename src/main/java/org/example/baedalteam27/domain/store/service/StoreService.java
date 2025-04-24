@@ -10,15 +10,18 @@ import org.example.baedalteam27.domain.store.dto.response.SaveStoreResponseDto;
 import org.example.baedalteam27.domain.store.dto.response.StoreNameResponseDto;
 import org.example.baedalteam27.domain.store.dto.response.StoreResponseDto;
 import org.example.baedalteam27.domain.store.entity.Store;
+import org.example.baedalteam27.domain.store.enums.Status;
 import org.example.baedalteam27.domain.store.repository.StoreRepository;
 import org.example.baedalteam27.domain.user.UserRole;
 import org.example.baedalteam27.domain.user.entitiy.User;
 import org.example.baedalteam27.domain.user.repository.UserRepository;
+import org.example.baedalteam27.global.exception.ForbiddenException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.awt.*;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,17 +36,15 @@ public class StoreService {
 
 
     // 가게 등록
-    public SaveStoreResponseDto saveStore(Long userId, SaveStoreRequestDto requestDto, Long categoryId) {
+    public SaveStoreResponseDto saveStore(Long userId, SaveStoreRequestDto requestDto) {
         // 유저, 카테고리 조회
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("사용자가 존재하지 않습니다."));
+        User user = userRepository.getUserByUserId(userId);
 
-        Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new IllegalArgumentException("카테고리가 존재하지 않습니다."));
+        Category category = categoryRepository.findByIdOrElseThrow(requestDto.getCategoryId());
 
         // 유저가 사장님 권한을 가졌는지 검증
         if (!user.getRole().equals(UserRole.OWNER)) {
-            throw new IllegalArgumentException("가게를 등록할 권한이 없습니다.");
+            throw new ForbiddenException("가게를 등록할 권한이 없습니다.");
         }
 
         // 소요한 가게가 3개 이하인지 검증
@@ -69,6 +70,7 @@ public class StoreService {
         return new SaveStoreResponseDto(
                 saveStore.getId(),
                 saveStore.getStoreName(),
+                category.getName(),
                 saveStore.getAddress(),
                 saveStore.getPhoneNumber(),
                 saveStore.getOpenTime(),
@@ -103,30 +105,34 @@ public class StoreService {
 
     // 가게 단건 조회
     public StoreResponseDto findStore(Long storeId) {
-        Store store; // 변수 선언
         // 필수값 검증
         if (storeId == null) {
             throw new IllegalArgumentException("가게 번호는 필수!");
         }
 
         // 전체에서 가게 조회
-        store = storeRepository.findByIdAndIsDeletedFalse(storeId)
+        Store store = storeRepository.findByIdAndIsDeletedFalse(storeId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 이름의 가게를 찾을 수 없습니다."));
 
         // 메뉴를 MenuResponseDto에 담고 리스트로 변환 (N+1 문제 해결 예정)
-        List<MenuResponseDto> menuResponseDtoList = store.getMenus().stream()
-                .map(menu -> new MenuResponseDto(menu.getName(), menu.getPrice(), menu.getDescription()))
+        List<MenuDto> menuDtoList = store.getMenus().stream()
+                .map(menu -> new MenuDto(menu.getName(), menu.getPrice(), menu.getDescription(), menu.getIsSoldOut()))
                 .collect(Collectors.toList());
+
+        // 가게 상태 조회
+        Status currentStatus = store.getCurrentStatus(LocalTime.now());
 
         return new StoreResponseDto(
                 store.getId(),
                 store.getStoreName(),
+                store.getCategory().getName(),
                 store.getAddress(),
                 store.getPhoneNumber(),
                 store.getOpenTime(),
                 store.getClosedTime(),
                 store.getMinOrderPrice(),
-                menuResponseDtoList);
+                currentStatus.toString(),
+                menuDtoList);
     }
 
     // 가게 수정
@@ -134,13 +140,15 @@ public class StoreService {
     public void updateStore(Long userId, UpdateStoreRequestDto requestDto, Long storeId) {
 
         // 가게 찾기
-        Store store = storeRepository.findById(storeId)
-                .orElseThrow(() -> new IllegalArgumentException("가게가 존재하지 않습니다."));
+        Store store = storeRepository.findByIdOrElseThrow(storeId);
 
         // 유저가 가게를 등록한 유저인지 검증
         if (!userId.equals(store.getUser().getId())) {
-            throw new IllegalArgumentException("해당 가게에 대한 수정 권한이 없습니다.");
+            throw new ForbiddenException("해당 가게에 대한 수정 권한이 없습니다.");
         }
+
+        // 카테고리 조회
+        Category category = categoryRepository.findByIdOrElseThrow(requestDto.getCategoryId());
 
         // 가게 수정된 정보 저장
         store.update(
@@ -149,26 +157,25 @@ public class StoreService {
                 requestDto.getPhoneNumber(),
                 requestDto.getOpenTime(),
                 requestDto.getClosedTime(),
-                requestDto.getMinOrderPrice()
+                requestDto.getMinOrderPrice(),
+                category
         );
     }
 
     // 가게 폐업
     public void deleteStore(Long userId, Long storeId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("사용자가 존재하지 않습니다."));
+        User user = userRepository.getUserByUserId(userId);
 
         // 유저가 사장님 권한을 가졌는지 검증
         if (!user.getRole().equals(UserRole.OWNER)) {
-            throw new IllegalArgumentException("가게 사장님이 아닙니다.");
+            throw new ForbiddenException("가게 사장님이 아닙니다.");
         }
 
-        Store store = storeRepository.findById(storeId)
-                .orElseThrow(() -> new IllegalArgumentException("가게가 존재하지 않습니다."));
+        Store store = storeRepository.findByIdOrElseThrow(storeId);
 
         // 유저가 가게를 등록한 유저인지 검증
         if (!user.getId().equals(store.getUser().getId())) {
-            throw new IllegalArgumentException("해당 가게에 대한 삭제 권한이 없습니다.");
+            throw new ForbiddenException("해당 가게에 대한 삭제 권한이 없습니다.");
         }
 
         // 폐업한 가게를 다시 폐업하려고 할 때

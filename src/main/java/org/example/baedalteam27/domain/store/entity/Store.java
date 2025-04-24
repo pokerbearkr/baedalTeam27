@@ -67,9 +67,6 @@ public class Store {
     @OneToMany(mappedBy = "store")
     private List<Menu> menus = new ArrayList<>();  // menus null 값 방지 초기화
 
-    // 영업상태
-    private Status status;
-
     // 파라미터가 달라지는 여러 생성자를 위해 빌더 적용
     @Builder
     public Store (String storeName,
@@ -79,9 +76,9 @@ public class Store {
                   LocalTime closedTime,
                   Long minOrderPrice,
                   User user,
-                  Category category,
-                  List<Menu> menus,
-                  Status status) {
+                  Category category
+                  List<Menu> menus
+                  ) {
         this.storeName = storeName;
         this.address = address;
         this.phoneNumber = phoneNumber;
@@ -91,7 +88,6 @@ public class Store {
         this.user =user;
         this.category = category;
         this.menus = menus;
-        this.status = status;
     }
 
     // 가게 수정
@@ -100,7 +96,8 @@ public class Store {
                        String phoneNumber,
                        LocalTime openTime,
                        LocalTime closedTime,
-                       Long minOrderPrice
+                       Long minOrderPrice,
+                       Category category
     ) {
         this.storeName = storeName;
         this.address = address;
@@ -108,6 +105,7 @@ public class Store {
         this.openTime = openTime;
         this.closedTime = closedTime;
         this.minOrderPrice = minOrderPrice;
+        this.category = category;
     }
 
     // 가게 운영 상태
