@@ -1,4 +1,4 @@
-package org.example.baedalteam27.domain.category.dto;
+package org.example.baedalteam27.domain.category.dto.response;
 
 import lombok.Getter;
 
