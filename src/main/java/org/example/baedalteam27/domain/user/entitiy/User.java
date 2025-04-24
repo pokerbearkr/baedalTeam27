@@ -3,6 +3,7 @@ package org.example.baedalteam27.domain.user.entitiy;
 import java.time.LocalDateTime;
 
 import org.example.baedalteam27.domain.user.UserRole;
+import org.example.baedalteam27.global.entity.BaseEntity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -19,7 +20,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Table(name = "users") // H2 예약어 방지용
-public class User {
+public class User extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,6 +41,4 @@ public class User {
 
 	private Boolean isDeleted = false;
 
-	private LocalDateTime createdAt = LocalDateTime.now();
-	private LocalDateTime updatedAt;
 }
