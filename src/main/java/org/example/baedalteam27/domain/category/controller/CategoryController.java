@@ -14,7 +14,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("api/categories")
+@RequestMapping("/api/categories")
 public class CategoryController {
 
     private final CategoryService categoryService;
@@ -23,8 +23,8 @@ public class CategoryController {
     @PostMapping
     public ResponseEntity<CategoryResponseDto> saveCategory (
             @RequestBody CategoryRequestDto requestDto,
-            @LoginUser String role) {
-        CategoryResponseDto categoryResponseDto = categoryService.saveCategory(requestDto, role);
+            @LoginUser Long userId) {
+        CategoryResponseDto categoryResponseDto = categoryService.saveCategory(requestDto, userId);
         return ResponseEntity.ok(categoryResponseDto);
     }
 
@@ -36,21 +36,21 @@ public class CategoryController {
     }
 
     // 카테고리 수정
-    @PatchMapping("{categoryid}")
+    @PatchMapping("/{categoryid}")
     public ResponseEntity<Void> updateCategory (
             @PathVariable Long categoryid,
             @RequestBody UpdateCategoryRequestDto requestDto,
-            @LoginUser String role) {
-        categoryService.updateCategory(categoryid, requestDto, role);
+            @LoginUser Long userId) {
+        categoryService.updateCategory(categoryid, requestDto, userId);
         return ResponseEntity.ok().build();
     }
 
     // 카테고리 삭제
-    @DeleteMapping("{categoryid}")
+    @DeleteMapping("/{categoryid}")
     public ResponseEntity<Void> deleteCategory (
             @PathVariable Long categoryid,
-            @LoginUser String role) {
-        categoryService.deleteCategory(categoryid, role);
+            @LoginUser Long userId) {
+        categoryService.deleteCategory(categoryid, userId);
         return ResponseEntity.ok().build();
     }
 }
