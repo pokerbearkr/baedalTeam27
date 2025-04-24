@@ -1,15 +1,18 @@
 package org.example.baedalteam27.domain.menu.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Getter
-@AllArgsConstructor
-@NoArgsConstructor
 public class MenuDto {
-    private String name;
-    private int price;
-    private String description;
-    private boolean isSoldOut;
+    private final String name;
+    private final int price;
+    private final String description;
+    private final boolean isSoldOut;
+
+    public MenuDto(String name, int price, String description, boolean isSoldOut) {
+        this.name = name;
+        this.price = price;
+        this.description = description;
+        this.isSoldOut = isSoldOut;
+    }
 }
