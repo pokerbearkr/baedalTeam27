@@ -25,7 +25,7 @@ public class CategoryService {
 
     // 카테고리 생성
     public CategoryResponseDto saveCategory(CategoryRequestDto requestDto, Long userId) {
-        User user = userRepository.findByIdOrElseThrow(userId);
+        User user = userRepository.getUserByUserId(userId);
         // 권한 확인
         if (!user.getRole().equals(UserRole.ADMIN)) {
             throw new ForbiddenException("관리자 권한이 아닙니다.");
@@ -49,7 +49,7 @@ public class CategoryService {
 
     // 카테고리 수정
     public void updateCategory(Long categoryid, UpdateCategoryRequestDto requestDto, Long userId) {
-        User user = userRepository.findByIdOrElseThrow(userId);
+        User user = userRepository.getUserByUserId(userId);
         // 권한 확인
         if (!user.getRole().equals(UserRole.ADMIN)) {
             throw new ForbiddenException("관리자 권한이 아닙니다.");
@@ -67,7 +67,7 @@ public class CategoryService {
 
     // 카테고리 삭제
     public void deleteCategory(Long categoryid, Long userId) {
-        User user = userRepository.findByIdOrElseThrow(userId);
+        User user = userRepository.getUserByUserId(userId);
         // 권한 확인
         if (!user.getRole().equals(UserRole.ADMIN)) {
             throw new ForbiddenException("관리자 권한이 아닙니다.");
