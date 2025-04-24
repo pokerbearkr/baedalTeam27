@@ -38,7 +38,7 @@ public class StoreService {
     // 가게 등록
     public SaveStoreResponseDto saveStore(Long userId, SaveStoreRequestDto requestDto) {
         // 유저, 카테고리 조회
-        User user = userRepository.findByIdOrElseThrow(userId);
+        User user = userRepository.getUserByUserId(userId);
 
         Category category = categoryRepository.findByIdOrElseThrow(requestDto.getCategoryId());
 
@@ -164,7 +164,7 @@ public class StoreService {
 
     // 가게 폐업
     public void deleteStore(Long userId, Long storeId) {
-        User user = userRepository.findByIdOrElseThrow(userId);
+        User user = userRepository.getUserByUserId(userId);
 
         // 유저가 사장님 권한을 가졌는지 검증
         if (!user.getRole().equals(UserRole.OWNER)) {
