@@ -106,6 +106,4 @@ public class OrderService {
                 oneOrder.getOrderedTime(),
                 oneOrder.getOrderStatus());
     }
-
-    public
 }
