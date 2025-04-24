@@ -8,7 +8,6 @@ import org.example.baedalteam27.domain.store.dto.response.SaveStoreResponseDto;
 import org.example.baedalteam27.domain.store.dto.response.StoreNameResponseDto;
 import org.example.baedalteam27.domain.store.dto.response.StoreResponseDto;
 import org.example.baedalteam27.domain.store.service.StoreService;
-import org.example.baedalteam27.domain.user.entitiy.User;
 import org.example.baedalteam27.global.jwt.LoginUser;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,32 +27,31 @@ public class StoreController {
     // 가게 등록
     @PostMapping("api/categories/{categoryid}/stores")
     public ResponseEntity<SaveStoreResponseDto> saveStore (
-            @LoginUser User loginUser,
+            @LoginUser Long userId,
             @RequestBody SaveStoreRequestDto requestDto,
             @PathVariable Long categoryid
     ) {
-        SaveStoreResponseDto saveStoreResponseDto = storeService.saveStore(loginUser, requestDto, categoryid);
+        SaveStoreResponseDto saveStoreResponseDto = storeService.saveStore(userId, requestDto, categoryid);
         return ResponseEntity.ok(saveStoreResponseDto);
     }
 
     // 가게 전체 리스트 조회 (카테고리에 해당하는 가게명 또는 입력받은 단어가 들어가는 가게명)
     @GetMapping("api/stores")
     public ResponseEntity<Page<StoreNameResponseDto>> findStores (
-            @RequestParam Long categoryId,
-            @RequestParam String storeName,
+            @RequestParam(required = false) Long categoryId,
+            @RequestParam(required = false) String storeName,
             @PageableDefault(direction = Sort.Direction.ASC, sort = "storeName") Pageable pageable
     ) {
         Page<StoreNameResponseDto> storeNameResponseDto = storeService.findStores(categoryId, storeName, pageable);
         return ResponseEntity.ok(storeNameResponseDto);
     }
 
-    // 가게 단건 조회(카테고리에 해당하는 가게 또는 전체 가게들 중 하나의 가게 조회)
+    // 가게 단건 조회
     @GetMapping("api/stores/{storeid}")
     public ResponseEntity<StoreResponseDto> findStore (
-            @RequestParam Long categoryid,
             @PathVariable Long storeid
     ) {
-        StoreResponseDto store = storeService.findStore(categoryid, storeid);
+        StoreResponseDto store = storeService.findStore(storeid);
         return ResponseEntity.ok(store);
     }
 
@@ -71,10 +69,10 @@ public class StoreController {
     // 가게 폐업
     @DeleteMapping("api/stores/{storeid}")
     public ResponseEntity<Void> deleteStore (
-            @LoginUser User loginUser,
+            @LoginUser Long userId,
             @PathVariable Long storeid
     ) {
-        storeService.deleteStore(loginUser, storeid);
+        storeService.deleteStore(userId, storeid);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
