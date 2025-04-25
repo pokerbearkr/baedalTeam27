@@ -9,6 +9,7 @@ import org.example.baedalteam27.global.config.PasswordEncoder;
 import org.example.baedalteam27.global.jwt.JwtProvider;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 
@@ -22,6 +23,7 @@ public class AuthService {
 	private final RedisTemplate<String, String> redisTemplate;
 
 	// 회원가입
+	@Transactional
 	public void signup(SignupRequestDto dto) {
 		if (!isValidEmail(dto.getEmail()) || !isValidPassword(dto.getPassword())) {
 			throw new IllegalArgumentException("이메일 또는 비밀번호 형식이 유효하지 않습니다.");
@@ -41,6 +43,7 @@ public class AuthService {
 	}
 
 	// 로그인
+
 	public String login(LoginRequestDto dto) {
 		User user = userRepository.findByEmail(dto.getEmail())
 			.orElseThrow(() -> new IllegalArgumentException("아이디 또는 비밀번호가 일치하지 않습니다."));
@@ -57,6 +60,7 @@ public class AuthService {
 	}
 
 	// 회원 탈퇴
+	@Transactional
 	public void withdraw(Long userId, String rawPassword) {
 		User user = userRepository.getUserByUserId(userId);
 
@@ -82,6 +86,7 @@ public class AuthService {
 	}
 
 	// 비밀번호 변경
+	@Transactional
 	public PasswordChangeResponseDto passwordChange(Long userId, PasswordChangeRequestDto dto) {
 		User user = userRepository.getUserByUserId(userId);
 
@@ -99,6 +104,7 @@ public class AuthService {
 	}
 
 	// 로그아웃
+	@Transactional
 	public void logout(String token, Long userId) {
 		if (Boolean.TRUE.equals(redisTemplate.hasKey(token))) {
 			throw new IllegalStateException("이미 로그아웃된 사용자입니다.");
