@@ -2,7 +2,6 @@ package org.example.baedalteam27.domain.shoppingCart.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.example.baedalteam27.domain.menu.repository.MenuRepository;
 import org.example.baedalteam27.domain.shoppingCart.dto.request.AddShoppingCartRequest;
 import org.example.baedalteam27.domain.shoppingCart.dto.response.ShoppingCartResponse;
 import org.example.baedalteam27.domain.shoppingCart.entity.ShoppingCart;
@@ -25,7 +24,7 @@ public class ShoppingCartService {
 
     @Transactional
     public void add(Long userId, AddShoppingCartRequest dto){
-        Store store = storeRepository.findByIdOrElseThrow(userId);
+        Store store = storeRepository.findByUserIdAndIsDeletedFalseOrElseThrow(userId);
 
         List<Menu> menuList = store.getMenus();
 

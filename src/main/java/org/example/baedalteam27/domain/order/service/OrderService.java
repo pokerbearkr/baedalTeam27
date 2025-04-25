@@ -22,7 +22,6 @@ import org.example.baedalteam27.domain.store.repository.StoreRepository;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -81,7 +80,7 @@ public class OrderService {
     }
 
     public ArrayList<OrderResponse> getAllOrdersForStore(Long userId){
-        Store store = storeRepository.findByIdOrElseThrow(userId);
+        Store store = storeRepository.findByUserIdAndIsDeletedFalseOrElseThrow(userId);
 
         List<Order> orders = orderRepository.findOrdersByStoreIdAndOrderStatus(store.getId(), OrderStatus.PENDING);
 
