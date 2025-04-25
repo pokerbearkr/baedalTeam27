@@ -41,7 +41,7 @@ public class OrderController {
     판매자, 소비자 공통 api / 주문
      */
     @GetMapping(value = "/{orderId}")
-    public ResponseEntity<OrderResponse> getOneOrder(@LoginUser Long userId, Long orderId){
+    public ResponseEntity<OrderResponse> getOneOrder(@LoginUser Long userId, @PathVariable Long orderId){
         return ResponseEntity.ok(orderService.getOneOrder(userId, orderId));
 
     }
