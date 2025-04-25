@@ -48,7 +48,7 @@ public class StoreService {
             throw new ForbiddenException("가게를 등록할 권한이 없습니다.");
         }
 
-        // 소요한 가게가 3개 이하인지 검증
+        // 소유한 가게가 3개 이하인지 검증
         int storeCount = storeRepository.countByUserIdAndIsDeletedFalse(userId);
         if (storeCount >= 3) {
             throw new IllegalArgumentException("가게는 최대 3개까지만 등록할 수 있습니다.");
