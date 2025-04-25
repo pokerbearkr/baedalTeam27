@@ -12,20 +12,20 @@ import java.util.Optional;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order,Long> {
-    @Query(value = "SELECT * FROM orders WHERE user_id = :userId AND order_status = :status ORDER BY ordered_time DESC LIMIT 1", nativeQuery = true)
-    Optional<Order> findLatestOrderByUserIdAndStatus(@Param("userId") Long userId, @Param("status")OrderStatus status);
-    default Order getFindLatestOrderByUserIdAndStatus(Long userId, OrderStatus status){
+    @Query(value = "SELECT * FROM Orders  WHERE user_id = :userId AND order_status = :status ORDER BY ordered_time DESC LIMIT 1", nativeQuery = true)
+    Optional<Order> findLatestOrderByUserIdAndStatus(@Param("userId") Long userId, @Param("status") String status);
+    default Order getFindLatestOrderByUserIdAndStatus(Long userId, String status){
         return findLatestOrderByUserIdAndStatus(userId, status)
                 .orElseThrow(()-> new RuntimeException("주문이 없습니다."));
     }
 
-    @Query("SELECT o FROM Order o WHERE o.store = :storeId AND o.orderStatus = :status ORDER BY o.orderedTime DESC")
+    @Query("SELECT o FROM Order o WHERE o.store.id = :storeId AND o.orderStatus = :status ORDER BY o.orderedTime DESC")
     List<Order> findOrdersByStoreIdAndOrderStatus(@Param("storeId") Long storeId, @Param("status")OrderStatus orderStatus);
 
 
     @Query("SELECT o FROM Order o WHERE o.id = :orderId AND o.orderStatus = :status")
-    Optional<Order> findByIdAndOrderStatus(@Param("orderId")Long orderId, @Param("status")OrderStatus orderStatus);
-    default Order getFindByIdAndOrderStatus(Long orderId, OrderStatus orderStatus){
+    Optional<Order> findByIdAndOrderStatus(@Param("orderId")Long orderId, @Param("status")String orderStatus);
+    default Order getFindByIdAndOrderStatus(Long orderId, String orderStatus){
         return findByIdAndOrderStatus(orderId, orderStatus)
                 .orElseThrow(() -> new RuntimeException("주문이 없습니다."));
     }

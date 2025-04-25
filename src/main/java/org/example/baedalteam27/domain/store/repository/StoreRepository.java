@@ -7,12 +7,15 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
+
 public interface StoreRepository extends JpaRepository<Store, Long> {
     // 가게가 폐업 상태가 아닌 가게만 조회, storeName 단어가 들어간 가게들 조회
     Page<Store> findByStoreNameContainingAndIsDeletedFalse(String storeName, Pageable pageable);
 
     // (N+1문제 @EntityGraph 사용할 예정)
-    Optional<Store> findByIdAndIsDeletedFalse(Long storeId);
+    default Store findByIdAndIsDeletedFalseOrElseThrow(Long storeId) {
+        return findById(storeId).orElseThrow(() -> new IllegalArgumentException("가게가 존재하지 않습니다."));
+    }
 
     // 카테고리Id로 가게 조회
     Page<Store> findByCategoryIdAndIsDeletedFalse(Long categoryId, Pageable pageable);
@@ -21,7 +24,9 @@ public interface StoreRepository extends JpaRepository<Store, Long> {
 
     Page<Store> findByIsDeletedFalse(Pageable pageable);
 
-    default Store findByIdOrElseThrow(Long storeId) {
-        return findById(storeId).orElseThrow(() -> new IllegalArgumentException("가게가 존재하지 않습니다."));
+    // order 와 shoppingcart 에서 가게 조회
+    Optional<Store> findByUserIdAndIsDeletedFalse(Long userId);
+    default Store findByUserIdAndIsDeletedFalseOrElseThrow (Long userId) {
+        return findByUserIdAndIsDeletedFalse(userId).orElseThrow(() -> new IllegalArgumentException("가게를 찾을 수 없습니다."));
     }
 }

@@ -2,6 +2,7 @@ package org.example.baedalteam27.domain.store.dto.response;
 
 import lombok.Getter;
 import org.example.baedalteam27.domain.menu.dto.MenuDto;
+import org.example.baedalteam27.domain.menu.dto.MenuResponseDto;
 
 import java.time.LocalTime;
 import java.util.List;
@@ -17,10 +18,10 @@ public class StoreResponseDto {
     private final LocalTime closedTime;
     private final Long minOrderPrice;
     private final String status;
-    private final List<MenuDto> menus;
+    private final List<MenuResponseDto> menus;
 
 
-    public StoreResponseDto(Long id, String storeName, String categoryName, String address, String phoneNumber, LocalTime openTime, LocalTime closedTime, Long minOrderPrice, String status, List<MenuDto> menus) {
+    public StoreResponseDto(Long id, String storeName, String categoryName, String address, String phoneNumber, LocalTime openTime, LocalTime closedTime, Long minOrderPrice, String status, List<MenuResponseDto> menus) {
         this.id = id;
         this.storeName = storeName;
         this.categoryName = categoryName;

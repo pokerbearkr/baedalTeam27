@@ -1,10 +1,10 @@
 package org.example.baedalteam27.domain.store.service;
 
-import jakarta.transaction.Transactional;
+
 import lombok.RequiredArgsConstructor;
 import org.example.baedalteam27.domain.category.entity.Category;
 import org.example.baedalteam27.domain.category.repository.CategoryRepository;
-import org.example.baedalteam27.domain.menu.dto.MenuDto;
+import org.example.baedalteam27.domain.menu.dto.MenuResponseDto;
 import org.example.baedalteam27.domain.store.dto.request.SaveStoreRequestDto;
 import org.example.baedalteam27.domain.store.dto.request.UpdateStoreRequestDto;
 import org.example.baedalteam27.domain.store.dto.response.SaveStoreResponseDto;
@@ -20,11 +20,11 @@ import org.example.baedalteam27.global.exception.ForbiddenException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalTime;
 import java.util.List;
 
-import static org.example.baedalteam27.domain.category.service.CategoryService.isValidCategory;
 
 @Service
 @RequiredArgsConstructor
@@ -36,14 +36,12 @@ public class StoreService {
 
 
     // 가게 등록
+    @Transactional
     public SaveStoreResponseDto saveStore(Long userId, SaveStoreRequestDto requestDto) {
         // 유저, 카테고리 조회
         User user = userRepository.getUserByUserId(userId);
 
-        Category category = categoryRepository.findByIdOrElseThrow(requestDto.getCategoryId());
-
-        // 삭제된 카테고리인지 검증
-        isValidCategory(category);
+        Category category = categoryRepository.findByIdAndIsDeletedFalseOrElseThrow(requestDto.getCategoryId());
 
         // 유저가 사장님 권한을 가졌는지 검증
         if (!user.getRole().equals(UserRole.OWNER)) {
@@ -97,8 +95,6 @@ public class StoreService {
 
         // 카테고리에 해당하는 가게명
         if (categoryId != null) {
-            // 삭제된 카테고리인지 검증
-            isValidCategory(categoryRepository.findByIdOrElseThrow(categoryId));
             return storeRepository.findByCategoryIdAndIsDeletedFalse(categoryId, pageable)
                     .map(store -> new StoreNameResponseDto(store.getId(), store.getStoreName()));
         }
@@ -116,14 +112,14 @@ public class StoreService {
         }
 
         // 전체에서 가게 조회
-        Store store = storeRepository.findByIdAndIsDeletedFalse(storeId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 이름의 가게를 찾을 수 없습니다."));
+        Store store = storeRepository.findByIdAndIsDeletedFalseOrElseThrow(storeId);
 
         // 메뉴를 MenuResponseDto에 담고 리스트로 변환 (N+1 문제 해결 예정)
-        List<MenuDto> menuDtoList = store.getMenus()
+        List<MenuResponseDto> menuDtoList = store.getMenus()
                 .stream()
-                .map(menu -> new MenuDto(
+                .map(menu -> new MenuResponseDto(
                         menu.getId(),
+                        storeId,
                         menu.getName(),
                         menu.getPrice(),
                         menu.getDescription(),
@@ -151,7 +147,7 @@ public class StoreService {
     public void updateStore(Long userId, UpdateStoreRequestDto requestDto, Long storeId) {
 
         // 가게 찾기
-        Store store = storeRepository.findByIdOrElseThrow(storeId);
+        Store store = storeRepository.findByIdAndIsDeletedFalseOrElseThrow(storeId);
 
         // 유저가 가게를 등록한 유저인지 검증
         if (!userId.equals(store.getUser().getId())) {
@@ -159,10 +155,7 @@ public class StoreService {
         }
 
         // 카테고리 조회
-        Category category = categoryRepository.findByIdOrElseThrow(requestDto.getCategoryId());
-
-        // 삭제된 카테고리인지 검증
-        isValidCategory(category);
+        Category category = categoryRepository.findByIdAndIsDeletedFalseOrElseThrow(requestDto.getCategoryId());
 
         // 가게 수정된 정보 저장
         store.update(
@@ -177,6 +170,7 @@ public class StoreService {
     }
 
     // 가게 폐업
+    @Transactional
     public void deleteStore(Long userId, Long storeId) {
         User user = userRepository.getUserByUserId(userId);
 
@@ -185,7 +179,7 @@ public class StoreService {
             throw new ForbiddenException("가게 사장님이 아닙니다.");
         }
 
-        Store store = storeRepository.findByIdOrElseThrow(storeId);
+        Store store = storeRepository.findByIdAndIsDeletedFalseOrElseThrow(storeId);
 
         // 유저가 가게를 등록한 유저인지 검증
         if (!user.getId().equals(store.getUser().getId())) {

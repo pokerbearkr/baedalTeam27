@@ -17,7 +17,7 @@ public class ShoppingCartController {
     private final ShoppingCartService shoppingCartService;
 
     @PostMapping
-    public ResponseEntity<Void> add(@LoginUser Long userId, AddShoppingCartRequest dto) {
+    public ResponseEntity<Void> add(@LoginUser Long userId, @RequestBody AddShoppingCartRequest dto) {
         shoppingCartService.add(userId, dto);
         return ResponseEntity.ok().build();
     }
