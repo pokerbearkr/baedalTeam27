@@ -4,7 +4,7 @@ package org.example.baedalteam27.domain.store.service;
 import lombok.RequiredArgsConstructor;
 import org.example.baedalteam27.domain.category.entity.Category;
 import org.example.baedalteam27.domain.category.repository.CategoryRepository;
-import org.example.baedalteam27.domain.menu.dto.MenuDto;
+import org.example.baedalteam27.domain.menu.dto.MenuResponseDto;
 import org.example.baedalteam27.domain.store.dto.request.SaveStoreRequestDto;
 import org.example.baedalteam27.domain.store.dto.request.UpdateStoreRequestDto;
 import org.example.baedalteam27.domain.store.dto.response.SaveStoreResponseDto;
@@ -115,10 +115,11 @@ public class StoreService {
         Store store = storeRepository.findByIdAndIsDeletedFalseOrElseThrow(storeId);
 
         // 메뉴를 MenuResponseDto에 담고 리스트로 변환 (N+1 문제 해결 예정)
-        List<MenuDto> menuDtoList = store.getMenus()
+        List<MenuResponseDto> menuDtoList = store.getMenus()
                 .stream()
-                .map(menu -> new MenuDto(
+                .map(menu -> new MenuResponseDto(
                         menu.getId(),
+                        storeId,
                         menu.getName(),
                         menu.getPrice(),
                         menu.getDescription(),
