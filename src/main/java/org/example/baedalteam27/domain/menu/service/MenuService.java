@@ -16,7 +16,7 @@ public class MenuService {
     private final StoreRepository storeRepository;
 
     public Menu createMenu(MenuDto menuDto) {
-        Store store = storeRepository.findById(menuDto.getStoreId())
+        Store store = storeRepository.findById(menuDto.getId())
                 .orElseThrow(() -> new IllegalArgumentException("가게를 찾을 수 없습니다"));
 
         Menu menu = Menu.builder()
@@ -24,7 +24,7 @@ public class MenuService {
                 .name(menuDto.getName())
                 .price(menuDto.getPrice())
                 .description(menuDto.getDescription())
-                .isSoldout(menuDto.isSoldout())
+                .isSoldOut(menuDto.isSoldOut())
                 .build();
 
         return menuRepository.save(menu);

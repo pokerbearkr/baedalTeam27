@@ -1,8 +1,8 @@
 package org.example.baedalteam27.domain.store.dto.response;
 
 import lombok.Getter;
+import org.example.baedalteam27.domain.menu.dto.MenuDto;
 
-import java.awt.*;
 import java.time.LocalTime;
 import java.util.List;
 

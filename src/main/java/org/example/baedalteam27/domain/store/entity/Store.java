@@ -5,13 +5,15 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.baedalteam27.domain.category.entity.Category;
+import org.example.baedalteam27.domain.menu.entity.Menu;
 import org.example.baedalteam27.domain.store.enums.Status;
 import org.example.baedalteam27.domain.user.entitiy.User;
 import org.hibernate.annotations.SQLDelete;
 
-import java.awt.*;
+
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity
@@ -77,7 +79,6 @@ public class Store {
                   Long minOrderPrice,
                   User user,
                   Category category
-                  List<Menu> menus
                   ) {
         this.storeName = storeName;
         this.address = address;
@@ -87,7 +88,6 @@ public class Store {
         this.minOrderPrice = minOrderPrice;
         this.user =user;
         this.category = category;
-        this.menus = menus;
     }
 
     // 가게 수정
@@ -110,10 +110,21 @@ public class Store {
 
     // 가게 운영 상태
     public Status getCurrentStatus(LocalTime now) {
-        if (now.isAfter(openTime) && now.isBefore(closedTime)) {
-            return Status.OPEN;
-        } else {
-            return Status.CLOSED;
+        // 같은 날에 영업 종료
+        if (openTime.isBefore(closedTime)) {
+            // 예) 09:00:00 ~ 21:00:00
+            if (now.isAfter(openTime) && now.isBefore(closedTime)) {
+                return Status.OPEN;
+            }
         }
+
+        // 다음날까지 영업하는 경우
+        if (openTime.isAfter(closedTime)) {
+            // 예) 21:00:00 ~ 03:00:00
+            if (now.isAfter(openTime) || now.isBefore(closedTime)) {
+                return Status.OPEN;
+            }
+        }
+        return Status.CLOSED;
     }
 }
