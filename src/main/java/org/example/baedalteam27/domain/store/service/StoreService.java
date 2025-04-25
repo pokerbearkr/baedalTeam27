@@ -36,6 +36,7 @@ public class StoreService {
 
 
     // 가게 등록
+    @Transactional
     public SaveStoreResponseDto saveStore(Long userId, SaveStoreRequestDto requestDto) {
         // 유저, 카테고리 조회
         User user = userRepository.getUserByUserId(userId);
@@ -177,6 +178,7 @@ public class StoreService {
     }
 
     // 가게 폐업
+    @Transactional
     public void deleteStore(Long userId, Long storeId) {
         User user = userRepository.getUserByUserId(userId);
 

@@ -25,6 +25,7 @@ public class CategoryService {
     private final UserRepository userRepository;
 
     // 카테고리 생성
+    @Transactional
     public CategoryResponseDto saveCategory(CategoryRequestDto requestDto, Long userId) {
         User user = userRepository.getUserByUserId(userId);
         // 권한 확인
@@ -72,6 +73,7 @@ public class CategoryService {
     }
 
     // 카테고리 삭제
+    @Transactional
     public void deleteCategory(Long categoryid, Long userId) {
         User user = userRepository.getUserByUserId(userId);
         // 권한 확인
