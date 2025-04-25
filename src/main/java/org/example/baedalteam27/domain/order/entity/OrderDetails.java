@@ -1,16 +1,18 @@
 package org.example.baedalteam27.domain.order.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.example.baedalteam27.domain.order.entity.Order;
 import org.example.baedalteam27.domain.menu.entity.Menu;
 
 
 @Entity
-@Getter @Setter
+@Getter
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class OrderDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,4 +37,6 @@ public class OrderDetails {
         this.menu = menu;
         this.quantity = quantity;
     }
+
+
 }

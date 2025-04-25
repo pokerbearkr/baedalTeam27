@@ -22,7 +22,6 @@ import org.example.baedalteam27.domain.store.repository.StoreRepository;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -97,9 +96,8 @@ public class OrderService {
         return ordersResponses;
     }
 
-    public OrderResponse getOneOrder(Long userId){
-        Order oneOrder = orderRepository.findLatestOrderByUserIdAndStatus(userId, OrderStatus.PENDING)
-                .orElseThrow(() -> new RuntimeException("주문이 없습니다."));
+    public OrderResponse getOneOrder(Long userId, Long orderId){
+        Order oneOrder = orderRepository.getFindByIdAndOrderStatus(orderId, OrderStatus.PENDING);
 
         return new OrderResponse(oneOrder.getId(),
                 oneOrder.getLocation(),

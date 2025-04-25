@@ -1,16 +1,17 @@
 package org.example.baedalteam27.domain.shoppingCart.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.example.baedalteam27.domain.user.entitiy.User;
 import org.example.baedalteam27.domain.store.entity.Store;
 import org.example.baedalteam27.domain.menu.entity.Menu;
 
 @Entity
-@Getter @Setter
+@Getter
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "shopping_cart")
 public class ShoppingCart {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

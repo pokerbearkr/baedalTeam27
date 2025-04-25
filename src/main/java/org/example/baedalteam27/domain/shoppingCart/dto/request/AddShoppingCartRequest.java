@@ -6,8 +6,8 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class AddShoppingCartRequest {
-    Long user;
-    Long store;
-    Long menu;
-    int quantity;
+    private final Long user;
+    private final Long store;
+    private final Long menu;
+    private final int quantity;
 }
