@@ -118,7 +118,7 @@ public class StoreService {
 
         // 전체에서 가게 조회
         Store store = storeRepository.findByIdAndIsDeletedFalse(storeId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 이름의 가게를 찾을 수 없습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("가게를 찾을 수 없습니다."));
 
         // 메뉴를 MenuResponseDto에 담고 리스트로 변환 (N+1 문제 해결 예정)
         List<MenuDto> menuDtoList = store.getMenus()
