@@ -53,7 +53,7 @@ public class OrderService {
         // 상세 주문 저장
         // 방금 주문한 유일한 칼럼을 userId와 OrderStatus, 그리고 Limit 1로 찾음
         Order theOrder = orderRepository
-                .getFindLatestOrderByUserIdAndStatus(userId, OrderStatus.PENDING);
+                .getFindLatestOrderByUserIdAndStatus(userId, OrderStatus.PENDING.toString());
 
         ArrayList<OrderDetails> orderDetails = cart.stream()
                 .map(c -> new OrderDetails(theOrder, c.getMenu(), c.getQuantity()))
@@ -70,7 +70,7 @@ public class OrderService {
      */
     @Transactional
     public OrderStatus orderStatusChange(Long userId, OrderStatus orderStatus){
-        Order willBeCanceledOrder = orderRepository.getFindLatestOrderByUserIdAndStatus(userId, OrderStatus.PENDING);
+        Order willBeCanceledOrder = orderRepository.getFindLatestOrderByUserIdAndStatus(userId, OrderStatus.PENDING.toString());
 
 
         willBeCanceledOrder.setOrderStatus(orderStatus);
@@ -96,7 +96,7 @@ public class OrderService {
     }
 
     public OrderResponse getOneOrder(Long userId, Long orderId){
-        Order oneOrder = orderRepository.getFindByIdAndOrderStatus(orderId, OrderStatus.PENDING);
+        Order oneOrder = orderRepository.getFindByIdAndOrderStatus(orderId, OrderStatus.PENDING.toString());
 
         return new OrderResponse(oneOrder.getId(),
                 oneOrder.getLocation(),
