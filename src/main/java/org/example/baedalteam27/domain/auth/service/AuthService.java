@@ -1,13 +1,8 @@
 package org.example.baedalteam27.domain.auth.service;
 
 import lombok.RequiredArgsConstructor;
-
-import org.example.baedalteam27.domain.auth.dto.LoginRequestDto;
-import org.example.baedalteam27.domain.auth.dto.MailCheckRequestDto;
-import org.example.baedalteam27.domain.auth.dto.MailCheckResponseDto;
-import org.example.baedalteam27.domain.auth.dto.PasswordChangeRequestDto;
-import org.example.baedalteam27.domain.auth.dto.PasswordChangeResponseDto;
-import org.example.baedalteam27.domain.auth.dto.SignupRequestDto;
+import org.example.baedalteam27.domain.auth.dto.*;
+import org.example.baedalteam27.domain.user.UserRole;
 import org.example.baedalteam27.domain.user.entitiy.User;
 import org.example.baedalteam27.domain.user.repository.UserRepository;
 import org.example.baedalteam27.global.config.PasswordEncoder;
@@ -26,7 +21,7 @@ public class AuthService {
 	private final JwtProvider jwtProvider;
 	private final RedisTemplate<String, String> redisTemplate;
 
-
+	// 회원가입
 	public void signup(SignupRequestDto dto) {
 		if (!isValidEmail(dto.getEmail()) || !isValidPassword(dto.getPassword())) {
 			throw new IllegalArgumentException("이메일 또는 비밀번호 형식이 유효하지 않습니다.");
@@ -36,14 +31,16 @@ public class AuthService {
 			throw new IllegalArgumentException("이미 존재하는 이메일입니다.");
 		}
 
-		User user = new User();
-		user.setEmail(dto.getEmail());
-		user.setPassword(passwordEncoder.encode(dto.getPassword()));
-		user.setRole(dto.getRole());
+		User user = User.builder()
+			.email(dto.getEmail())
+			.password(passwordEncoder.encode(dto.getPassword()))
+			.role(dto.getRole())
+			.build();
 
 		userRepository.save(user);
 	}
 
+	// 로그인
 	public String login(LoginRequestDto dto) {
 		User user = userRepository.findByEmail(dto.getEmail())
 			.orElseThrow(() -> new IllegalArgumentException("아이디 또는 비밀번호가 일치하지 않습니다."));
@@ -59,7 +56,7 @@ public class AuthService {
 		return jwtProvider.createToken(user.getId(), user.getRole().name());
 	}
 
-
+	// 회원 탈퇴
 	public void withdraw(Long userId, String rawPassword) {
 		User user = userRepository.getUserByUserId(userId);
 
@@ -67,9 +64,10 @@ public class AuthService {
 			throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
 		}
 
-		user.setIsDeleted(true);
+		user.withdraw();
 	}
 
+	// 이메일 중복 체크
 	public MailCheckResponseDto mailCheck(MailCheckRequestDto dto) {
 		if (!isValidEmail(dto.getEmail())) {
 			throw new IllegalArgumentException("올바른 이메일 형식이 아닙니다.");
@@ -82,48 +80,40 @@ public class AuthService {
 
 		return new MailCheckResponseDto(true, "사용 가능한 이메일입니다.");
 	}
-	// Redis 임시저장
 
 	// 비밀번호 변경
 	public PasswordChangeResponseDto passwordChange(Long userId, PasswordChangeRequestDto dto) {
 		User user = userRepository.getUserByUserId(userId);
 
-		// 현재 비밀번호 일치 여부 확인
 		if (!passwordEncoder.matches(dto.getNowPassword(), user.getPassword())) {
 			throw new IllegalArgumentException("현재 비밀번호와 일치하지 않습니다.");
 		}
 
-		// 새 비밀번호 형식 확인
 		if (!isValidPassword(dto.getNewPassword())) {
 			throw new IllegalArgumentException("새 비밀번호 형식이 유효하지 않습니다.");
 		}
 
-		// 새 비밀번호 저장
-		user.setPassword(passwordEncoder.encode(dto.getNewPassword()));
+		user.changePassword(passwordEncoder.encode(dto.getNewPassword()));
 
 		return new PasswordChangeResponseDto("비밀번호가 성공적으로 변경되었습니다.");
 	}
 
+	// 로그아웃
 	public void logout(String token, Long userId) {
-		// 이미 Redis에 해당 토큰이 저장되어 있으면 재로그아웃 방지
 		if (Boolean.TRUE.equals(redisTemplate.hasKey(token))) {
 			throw new IllegalStateException("이미 로그아웃된 사용자입니다.");
 		}
 
-		// 토큰의 남은 유효 시간 계산
 		long expiration = jwtProvider.getExpiration(token);
-
-		// Redis에 저장 (블랙리스트로 간주)
 		redisTemplate.opsForValue().set(token, "logout", Duration.ofMillis(expiration));
 	}
 
-
-
-
+	// 이메일 유효성 체크
 	private boolean isValidEmail(String email) {
 		return email.matches("^[A-Za-z0-9+_.-]+@(.+)$");
 	}
 
+	// 비밀번호 유효성 체크
 	private boolean isValidPassword(String pw) {
 		return pw.length() >= 8 &&
 			pw.matches(".*[A-Z].*") &&
