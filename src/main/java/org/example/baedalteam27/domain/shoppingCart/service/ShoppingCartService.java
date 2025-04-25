@@ -1,6 +1,5 @@
 package org.example.baedalteam27.domain.shoppingCart.service;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.example.baedalteam27.domain.shoppingCart.dto.request.AddShoppingCartRequest;
 import org.example.baedalteam27.domain.shoppingCart.dto.response.ShoppingCartResponse;
@@ -11,6 +10,7 @@ import org.example.baedalteam27.domain.menu.entity.Menu;
 import org.example.baedalteam27.domain.store.repository.StoreRepository;
 import org.example.baedalteam27.domain.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 import java.util.List;
