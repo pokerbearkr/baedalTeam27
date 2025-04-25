@@ -5,13 +5,15 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.baedalteam27.domain.category.entity.Category;
+import org.example.baedalteam27.domain.menu.entity.Menu;
 import org.example.baedalteam27.domain.store.enums.Status;
 import org.example.baedalteam27.domain.user.entitiy.User;
 import org.hibernate.annotations.SQLDelete;
 
-import java.awt.*;
+
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity
@@ -77,7 +79,6 @@ public class Store {
                   Long minOrderPrice,
                   User user,
                   Category category
-                  List<Menu> menus
                   ) {
         this.storeName = storeName;
         this.address = address;
@@ -87,7 +88,6 @@ public class Store {
         this.minOrderPrice = minOrderPrice;
         this.user =user;
         this.category = category;
-        this.menus = menus;
     }
 
     // 가게 수정
