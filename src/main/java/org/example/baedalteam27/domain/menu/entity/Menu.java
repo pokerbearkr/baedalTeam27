@@ -16,7 +16,7 @@ public class Menu {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "store_id")
     private Store store;
 
@@ -30,15 +30,15 @@ public class Menu {
     private String description;
 
     @Column(nullable = false)
-    private boolean isSoldout;
+    private boolean isSoldOut;
 
     @Builder
-    public Menu(Store store, String name, int price, String description, boolean isSoldout) {
+    public Menu(Store store, String name, int price, String description, boolean isSoldOut) {
         this.store = store;
         this.name = name;
         this.price = price;
         this.description = description;
-        this.isSoldout = isSoldout;
+        this.isSoldOut = isSoldOut;
     }
 
 }
