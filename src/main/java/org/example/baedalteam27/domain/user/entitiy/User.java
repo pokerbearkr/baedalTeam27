@@ -1,25 +1,16 @@
 package org.example.baedalteam27.domain.user.entitiy;
 
-import java.time.LocalDateTime;
-
+import jakarta.persistence.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.example.baedalteam27.domain.user.UserRole;
 import org.example.baedalteam27.global.entity.BaseEntity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.Getter;
-import lombok.Setter;
-
 @Entity
 @Getter
-@Setter
-@Table(name = "users") // H2 예약어 방지용
+@NoArgsConstructor
+@Table(name = "users")
 public class User extends BaseEntity {
 
 	@Id
@@ -34,11 +25,29 @@ public class User extends BaseEntity {
 
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
-	private UserRole role;      // 역할 (USER, OWNER, ADMIN)
+	private UserRole role;
 
-	private String provider;     // "kakao", "naver" 등
-	private String providerId;   // 소셜 ID
+	private String provider;
+
+	private String providerId;
 
 	private Boolean isDeleted = false;
 
+	@Builder
+	public User(String email, String password, UserRole role, String provider, String providerId) {
+		this.email = email;
+		this.password = password;
+		this.role = role;
+		this.provider = provider;
+		this.providerId = providerId;
+		this.isDeleted = false;
+	}
+
+	public void changePassword(String encodedPassword) {
+		this.password = encodedPassword;
+	}
+
+	public void withdraw() {
+		this.isDeleted = true;
+	}
 }

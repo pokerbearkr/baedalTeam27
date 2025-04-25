@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public class MailCheckResponseDto {
-	private final boolean available;
-	private final String message;
+public class LoginResponseDto {
+	private final String accessToken;
+	private final String refreshToken;
 }
