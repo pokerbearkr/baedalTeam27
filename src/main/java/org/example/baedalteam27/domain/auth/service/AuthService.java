@@ -2,7 +2,6 @@ package org.example.baedalteam27.domain.auth.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.baedalteam27.domain.auth.dto.*;
-import org.example.baedalteam27.domain.user.UserRole;
 import org.example.baedalteam27.domain.user.entitiy.User;
 import org.example.baedalteam27.domain.user.repository.UserRepository;
 import org.example.baedalteam27.global.config.PasswordEncoder;
@@ -12,6 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -56,7 +57,7 @@ public class AuthService {
 			throw new IllegalArgumentException("아이디 또는 비밀번호가 일치하지 않습니다.");
 		}
 
-		return jwtProvider.createToken(user.getId(), user.getRole().name());
+		return jwtProvider.createAccessToken(user.getId(), user.getRole().name());
 	}
 
 	// 회원 탈퇴
@@ -112,6 +113,24 @@ public class AuthService {
 
 		long expiration = jwtProvider.getExpiration(token);
 		redisTemplate.opsForValue().set(token, "logout", Duration.ofMillis(expiration));
+	}
+
+	public Map<String, String> reissueToken(String refreshToken, Long userId) {
+		if (!jwtProvider.validateToken(refreshToken)) {
+			throw new IllegalArgumentException("유효하지 않은 리프레시 토큰입니다.");
+		}
+
+		User user = userRepository.findById(userId)
+			.orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
+		String newAccessToken = jwtProvider.createAccessToken(user.getId(), user.getRole().name());
+		String newRefreshToken = jwtProvider.createRefreshToken();
+
+		Map<String, String> tokenMap = new HashMap<>();
+		tokenMap.put("accessToken", newAccessToken);
+		tokenMap.put("refreshToken", newRefreshToken);
+
+		return tokenMap;
 	}
 
 	// 이메일 유효성 체크

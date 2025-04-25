@@ -1,8 +1,11 @@
 package org.example.baedalteam27.domain.auth.controller;
 
+import java.util.Map;
+
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.example.baedalteam27.domain.auth.dto.LoginRequestDto;
+import org.example.baedalteam27.domain.auth.dto.LoginResponseDto;
 import org.example.baedalteam27.domain.auth.dto.MailCheckRequestDto;
 import org.example.baedalteam27.domain.auth.dto.MailCheckResponseDto;
 import org.example.baedalteam27.domain.auth.dto.PasswordChangeRequestDto;
@@ -10,6 +13,7 @@ import org.example.baedalteam27.domain.auth.dto.PasswordChangeResponseDto;
 import org.example.baedalteam27.domain.auth.dto.SignupRequestDto;
 import org.example.baedalteam27.domain.auth.dto.WithdrawRequestDto;
 import org.example.baedalteam27.domain.auth.service.AuthService;
+import org.example.baedalteam27.global.jwt.JwtProvider;
 import org.example.baedalteam27.global.jwt.LoginUser;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
 	private final AuthService authService;
+	private final JwtProvider jwtProvider;
 
 	// 회원가입
 	@PostMapping("/signup")
@@ -30,11 +35,10 @@ public class AuthController {
 
 	// 로그인
 	@PostMapping("/login")
-	public ResponseEntity<Void> login(@RequestBody LoginRequestDto dto) {
-		String token = authService.login(dto);
-		return ResponseEntity.ok()
-			.header("Authorization", "Bearer " + token)
-			.build();
+	public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto dto) {
+		String accessToken = authService.login(dto);
+		String refreshToken = jwtProvider.createRefreshToken();
+		return ResponseEntity.ok(new LoginResponseDto(accessToken, refreshToken));
 	}
 
 	// 계정 삭제 (soft delete)
@@ -71,6 +75,18 @@ public class AuthController {
 		String token = request.getHeader("Authorization").replace("Bearer ", "");
 		authService.logout(token, userId);
 		return ResponseEntity.ok().build();
+	}
+
+
+	@PostMapping("/reissue")
+	public ResponseEntity<Map<String, String>> reissue(
+		@RequestHeader("Authorization") String accessToken,
+		@RequestHeader("Refresh-Token") String refreshToken
+	) {
+		// "Bearer " 제거 후 유저 ID 수동 추출 (만료된 토큰에서도 Claims 추출은 가능)
+		Long userId = jwtProvider.extractUserIdAllowExpired(accessToken);
+		Map<String, String> tokens = authService.reissueToken(refreshToken, userId);
+		return ResponseEntity.ok(tokens);
 	}
 
 }
