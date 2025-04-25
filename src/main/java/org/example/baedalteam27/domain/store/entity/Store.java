@@ -78,7 +78,7 @@ public class Store {
                   User user,
                   Category category
                   List<Menu> menus
-                  ) {
+
         this.storeName = storeName;
         this.address = address;
         this.phoneNumber = phoneNumber;
@@ -116,4 +116,3 @@ public class Store {
             return Status.CLOSED;
         }
     }
-}
