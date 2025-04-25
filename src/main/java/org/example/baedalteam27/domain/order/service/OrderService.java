@@ -96,7 +96,7 @@ public class OrderService {
     }
 
     public OrderResponse getOneOrder(Long userId, Long orderId){
-        Order oneOrder = orderRepository.getFindByIdAndOrderStatus(orderId, OrderStatus.PENDING.toString());
+        Order oneOrder = orderRepository.getFindByIdAndOrderStatus(orderId, OrderStatus.PENDING);
 
         return new OrderResponse(oneOrder.getId(),
                 oneOrder.getLocation(),
