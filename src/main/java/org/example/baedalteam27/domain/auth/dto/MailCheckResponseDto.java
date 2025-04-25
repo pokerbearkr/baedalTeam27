@@ -1,6 +1,5 @@
 package org.example.baedalteam27.domain.auth.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
