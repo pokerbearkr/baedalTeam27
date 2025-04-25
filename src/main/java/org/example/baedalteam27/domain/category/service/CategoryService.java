@@ -43,6 +43,7 @@ public class CategoryService {
         List<Category> categories = categoryRepository.findAll();
 
         return categories.stream()
+                .filter(category -> !category.isDeleted())  // isDeleted 가 false인 상태만 조회
                 .map(category -> new FindCategoriesResponseDto(category.getId(), category.getName()))
                 .collect(Collectors.toList());
     }
@@ -62,6 +63,9 @@ public class CategoryService {
             throw new IllegalArgumentException("중복된 이름입니다.");
         }
 
+        // 삭제된 카테고리인지 검증
+        isValidCategory(category);
+
         category.update(requestDto.getName());
     }
 
@@ -75,6 +79,16 @@ public class CategoryService {
 
         Category category = categoryRepository.findByIdOrElseThrow(categoryid);
 
+        // 삭제된 카테고리인지 검증
+        isValidCategory(category);
+
         categoryRepository.delete(category);
+    }
+
+    // 삭제된 카테고리인지 검증
+    public static void isValidCategory (Category category) {
+        if (category.isDeleted()) {
+            throw new IllegalArgumentException("이미 삭제된 카테고리 입니다.");
+        }
     }
 }
