@@ -110,10 +110,21 @@ public class Store {
 
     // 가게 운영 상태
     public Status getCurrentStatus(LocalTime now) {
-        if (now.isAfter(openTime) && now.isBefore(closedTime)) {
-            return Status.OPEN;
-        } else {
-            return Status.CLOSED;
+        // 같은 날에 영업 종료
+        if (openTime.isBefore(closedTime)) {
+            // 예) 09:00:00 ~ 21:00:00
+            if (now.isAfter(openTime) && now.isBefore(closedTime)) {
+                return Status.OPEN;
+            }
         }
+
+        // 다음날까지 영업하는 경우
+        if (openTime.isAfter(closedTime)) {
+            // 예) 21:00:00 ~ 03:00:00
+            if (now.isAfter(openTime) || now.isBefore(closedTime)) {
+                return Status.OPEN;
+            }
+        }
+        return Status.CLOSED;
     }
 }
