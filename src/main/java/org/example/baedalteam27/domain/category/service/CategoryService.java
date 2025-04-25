@@ -1,5 +1,6 @@
 package org.example.baedalteam27.domain.category.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.example.baedalteam27.domain.category.dto.request.CategoryRequestDto;
 import org.example.baedalteam27.domain.category.dto.response.CategoryResponseDto;
@@ -49,6 +50,7 @@ public class CategoryService {
     }
 
     // 카테고리 수정
+    @Transactional
     public void updateCategory(Long categoryid, UpdateCategoryRequestDto requestDto, Long userId) {
         User user = userRepository.getUserByUserId(userId);
         // 권한 확인
