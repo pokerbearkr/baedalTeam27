@@ -1,6 +1,5 @@
 package org.example.baedalteam27.domain.menu.service;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.example.baedalteam27.domain.menu.dto.MenuDto;
 import org.example.baedalteam27.domain.menu.entity.Menu;
@@ -8,6 +7,7 @@ import org.example.baedalteam27.domain.menu.repository.MenuRepository;
 import org.example.baedalteam27.domain.store.entity.Store;
 import org.example.baedalteam27.domain.store.repository.StoreRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -17,8 +17,7 @@ public class MenuService {
     private final StoreRepository storeRepository;
 
     public Menu createMenu(MenuDto menuDto) {
-        Store store = storeRepository.findById(menuDto.getId())
-                .orElseThrow(() -> new IllegalArgumentException("가게를 찾을 수 없습니다"));
+        Store store = storeRepository.findByIdOrElseThrow(menuDto.getStoreId());
 
         Menu menu = Menu.builder()
                 .store(store)
@@ -33,11 +32,8 @@ public class MenuService {
 
     @Transactional
     public Menu updateMenu(Long menuId, MenuDto menuDto) {
-        Menu menu = menuRepository.findById(menuId)
-                .orElseThrow(() -> new IllegalArgumentException("메뉴를 찾을 수 없습니다"));
-
-        Store store = storeRepository.findById(menuDto.getId())
-                .orElseThrow(() -> new IllegalArgumentException("가게를 찾을 수 없습니다"));
+        Menu menu = menuRepository.findByIdOrElseThrow(menuId);
+        Store store = storeRepository.findByIdOrElseThrow(menuDto.getStoreId());
 
         menu.setStore(store);
         menu.setName(menuDto.getName());
@@ -50,8 +46,7 @@ public class MenuService {
 
     @Transactional
     public void deleteMenu(Long menuId) {
-        Menu menu = menuRepository.findById(menuId)
-                .orElseThrow(() -> new IllegalArgumentException("메뉴를 찾을 수 없습니다"));
+        Menu menu = menuRepository.findByIdOrElseThrow(menuId);
         menuRepository.delete(menu);
     }
 }
