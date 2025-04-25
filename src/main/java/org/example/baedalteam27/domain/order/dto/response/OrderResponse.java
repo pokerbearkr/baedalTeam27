@@ -10,11 +10,11 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Getter
 public class OrderResponse {
-    private Long orderId;
+    private final Long orderId;
 
-    private String location;
+    private final String location;
 
-    private LocalDateTime orderedTime;
+    private final LocalDateTime orderedTime;
 
-    private OrderStatus orderStatus;
+    private final OrderStatus orderStatus;
 }
