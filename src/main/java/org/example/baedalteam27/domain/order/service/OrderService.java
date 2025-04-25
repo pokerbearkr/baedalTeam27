@@ -22,7 +22,6 @@ import org.example.baedalteam27.domain.store.repository.StoreRepository;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -54,8 +53,7 @@ public class OrderService {
         // 상세 주문 저장
         // 방금 주문한 유일한 칼럼을 userId와 OrderStatus, 그리고 Limit 1로 찾음
         Order theOrder = orderRepository
-                .findLatestOrderByUserIdAndStatus(userId, OrderStatus.PENDING)
-                .orElseThrow(() -> new RuntimeException("주문이 없습니다."));
+                .getFindLatestOrderByUserIdAndStatus(userId, OrderStatus.PENDING);
 
         ArrayList<OrderDetails> orderDetails = cart.stream()
                 .map(c -> new OrderDetails(theOrder, c.getMenu(), c.getQuantity()))
@@ -72,8 +70,8 @@ public class OrderService {
      */
     @Transactional
     public OrderStatus orderStatusChange(Long userId, OrderStatus orderStatus){
-        Order willBeCanceledOrder = orderRepository.findLatestOrderByUserIdAndStatus(userId, OrderStatus.PENDING)
-                .orElseThrow(()-> new RuntimeException("주문이 없습니다"));
+        Order willBeCanceledOrder = orderRepository.getFindLatestOrderByUserIdAndStatus(userId, OrderStatus.PENDING);
+
 
         willBeCanceledOrder.setOrderStatus(orderStatus);
         willBeCanceledOrder.setOrderedTime(LocalDateTime.now());
@@ -97,9 +95,8 @@ public class OrderService {
         return ordersResponses;
     }
 
-    public OrderResponse getOneOrder(Long userId){
-        Order oneOrder = orderRepository.findLatestOrderByUserIdAndStatus(userId, OrderStatus.PENDING)
-                .orElseThrow(() -> new RuntimeException("주문이 없습니다."));
+    public OrderResponse getOneOrder(Long userId, Long orderId){
+        Order oneOrder = orderRepository.getFindByIdAndOrderStatus(orderId, OrderStatus.PENDING);
 
         return new OrderResponse(oneOrder.getId(),
                 oneOrder.getLocation(),

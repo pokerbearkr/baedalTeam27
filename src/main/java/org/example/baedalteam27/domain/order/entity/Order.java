@@ -1,12 +1,12 @@
 package org.example.baedalteam27.domain.order.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.example.baedalteam27.domain.user.entitiy.User;
 import org.example.baedalteam27.domain.store.entity.Store;
-
 
 
 import java.time.LocalDateTime;
@@ -14,8 +14,10 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
-@Setter
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "orders")
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,5 +49,13 @@ public class Order {
         this.location = location;
         this.orderedTime = orderedTime;
         this.orderStatus = orderStatus;
+    }
+
+    public void setOrderStatus(OrderStatus orderStatus){
+        this.orderStatus = orderStatus;
+    }
+
+    public void setOrderedTime(LocalDateTime time) {
+        this.orderedTime = time;
     }
 }

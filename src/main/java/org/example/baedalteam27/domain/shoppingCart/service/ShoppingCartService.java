@@ -41,6 +41,7 @@ public class ShoppingCartService {
                 dto.getQuantity()
                 );
         shoppingCartRepository.save(cart);
+
     }
 
     public List<ShoppingCartResponse> getShoppingCart(Long userid){

@@ -26,8 +26,8 @@ public class OrderController {
     /*
       소비자 주문 취소/ 판매자 주문 승인, 거절. 성공시 200 코드와 함꼐 변경한 상태(Enum) 반환
      */
-    @PostMapping
-    public ResponseEntity<OrderStatus> orderStatusChange(@LoginUser Long userId, OrderStatus orderStatus){
+    @PostMapping(value = "/status")
+    public ResponseEntity<OrderStatus> orderStatusChange(@LoginUser Long userId, @RequestParam OrderStatus orderStatus){
         return ResponseEntity.ok(orderService.orderStatusChange(userId, orderStatus));
     }
     /*
@@ -40,10 +40,9 @@ public class OrderController {
     /*
     판매자, 소비자 공통 api / 주문
      */
-    @GetMapping
-    public ResponseEntity<OrderResponse> getOneOrder(@LoginUser Long userId){
-        return ResponseEntity.ok(orderService.getOneOrder(userId));
-
+    @GetMapping(value = "/{orderId}")
+    public ResponseEntity<OrderResponse> getOneOrder(@LoginUser Long userId, Long orderId){
+        return ResponseEntity.ok(orderService.getOneOrder(userId, orderId));
 
     }
 }
