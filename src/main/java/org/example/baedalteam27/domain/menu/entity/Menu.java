@@ -41,4 +41,24 @@ public class Menu {
         this.isSoldOut = isSoldOut;
     }
 
+    public void setStore(Store store) {
+        this.store = store;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setSoldout(boolean soldout) {
+        this.isSoldOut = soldout;
+    }
+
 }
