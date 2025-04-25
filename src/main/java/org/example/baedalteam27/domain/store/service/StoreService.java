@@ -4,7 +4,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.example.baedalteam27.domain.category.entity.Category;
 import org.example.baedalteam27.domain.category.repository.CategoryRepository;
-import org.example.baedalteam27.domain.menu.repository.MenuRepository;
+import org.example.baedalteam27.domain.menu.dto.MenuDto;
 import org.example.baedalteam27.domain.store.dto.request.SaveStoreRequestDto;
 import org.example.baedalteam27.domain.store.dto.request.UpdateStoreRequestDto;
 import org.example.baedalteam27.domain.store.dto.response.SaveStoreResponseDto;
@@ -21,10 +21,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.awt.*;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.stream.Collectors;
+
+import static org.example.baedalteam27.domain.category.service.CategoryService.isValidCategory;
 
 @Service
 @RequiredArgsConstructor
@@ -32,7 +32,6 @@ public class StoreService {
 
     private final StoreRepository storeRepository;
     private final UserRepository userRepository;
-    private final MenuRepository menuRepository;
     private final CategoryRepository categoryRepository;
 
 
@@ -42,6 +41,9 @@ public class StoreService {
         User user = userRepository.getUserByUserId(userId);
 
         Category category = categoryRepository.findByIdOrElseThrow(requestDto.getCategoryId());
+
+        // 삭제된 카테고리인지 검증
+        isValidCategory(category);
 
         // 유저가 사장님 권한을 가졌는지 검증
         if (!user.getRole().equals(UserRole.OWNER)) {
@@ -95,6 +97,8 @@ public class StoreService {
 
         // 카테고리에 해당하는 가게명
         if (categoryId != null) {
+            // 삭제된 카테고리인지 검증
+            isValidCategory(categoryRepository.findByIdOrElseThrow(categoryId));
             return storeRepository.findByCategoryIdAndIsDeletedFalse(categoryId, pageable)
                     .map(store -> new StoreNameResponseDto(store.getId(), store.getStoreName()));
         }
@@ -116,9 +120,15 @@ public class StoreService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 이름의 가게를 찾을 수 없습니다."));
 
         // 메뉴를 MenuResponseDto에 담고 리스트로 변환 (N+1 문제 해결 예정)
-        List<MenuDto> menuDtoList = store.getMenus().stream()
-                .map(menu -> new MenuDto(menu.getName(), menu.getPrice(), menu.getDescription(), menu.getIsSoldOut()))
-                .collect(Collectors.toList());
+        List<MenuDto> menuDtoList = store.getMenus()
+                .stream()
+                .map(menu -> new MenuDto(
+                        menu.getId(),
+                        menu.getName(),
+                        menu.getPrice(),
+                        menu.getDescription(),
+                        menu.isSoldOut()))
+                .toList();
 
         // 가게 상태 조회
         Status currentStatus = store.getCurrentStatus(LocalTime.now());
@@ -150,6 +160,9 @@ public class StoreService {
 
         // 카테고리 조회
         Category category = categoryRepository.findByIdOrElseThrow(requestDto.getCategoryId());
+
+        // 삭제된 카테고리인지 검증
+        isValidCategory(category);
 
         // 가게 수정된 정보 저장
         store.update(

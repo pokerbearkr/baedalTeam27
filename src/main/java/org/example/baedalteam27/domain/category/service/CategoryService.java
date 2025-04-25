@@ -64,9 +64,7 @@ public class CategoryService {
         }
 
         // 삭제된 카테고리인지 검증
-        if (category.isDeleted()) {
-            throw new IllegalArgumentException("이미 삭제된 카테고리 입니다.");
-        }
+        isValidCategory(category);
 
         category.update(requestDto.getName());
     }
@@ -82,10 +80,15 @@ public class CategoryService {
         Category category = categoryRepository.findByIdOrElseThrow(categoryid);
 
         // 삭제된 카테고리인지 검증
-        if (category.isDeleted()) {
-            throw new IllegalArgumentException("삭제된 카테고리를 다시 삭제할 수 없습니다.");
-        }
+        isValidCategory(category);
 
         categoryRepository.delete(category);
+    }
+
+    // 삭제된 카테고리인지 검증
+    public static void isValidCategory (Category category) {
+        if (category.isDeleted()) {
+            throw new IllegalArgumentException("이미 삭제된 카테고리 입니다.");
+        }
     }
 }
