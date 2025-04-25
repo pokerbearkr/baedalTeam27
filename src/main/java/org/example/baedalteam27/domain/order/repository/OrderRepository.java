@@ -24,8 +24,8 @@ public interface OrderRepository extends JpaRepository<Order,Long> {
 
 
     @Query("SELECT o FROM Order o WHERE o.id = :orderId AND o.orderStatus = :status")
-    Optional<Order> findByIdAndOrderStatus(@Param("orderId")Long orderId, @Param("status")String orderStatus);
-    default Order getFindByIdAndOrderStatus(Long orderId, String orderStatus){
+    Optional<Order> findByIdAndOrderStatus(@Param("orderId")Long orderId, @Param("status")OrderStatus orderStatus);
+    default Order getFindByIdAndOrderStatus(Long orderId, OrderStatus orderStatus){
         return findByIdAndOrderStatus(orderId, orderStatus)
                 .orElseThrow(() -> new RuntimeException("주문이 없습니다."));
     }
