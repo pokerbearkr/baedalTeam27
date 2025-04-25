@@ -1,6 +1,6 @@
 package org.example.baedalteam27.domain.store.service;
 
-import jakarta.transaction.Transactional;
+
 import lombok.RequiredArgsConstructor;
 import org.example.baedalteam27.domain.category.entity.Category;
 import org.example.baedalteam27.domain.category.repository.CategoryRepository;
@@ -20,6 +20,7 @@ import org.example.baedalteam27.global.exception.ForbiddenException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalTime;
 import java.util.List;
@@ -111,8 +112,7 @@ public class StoreService {
         }
 
         // 전체에서 가게 조회
-        Store store = storeRepository.findByIdAndIsDeletedFalse(storeId)
-                .orElseThrow(() -> new IllegalArgumentException("가게를 찾을 수 없습니다."));
+        Store store = storeRepository.findByIdAndIsDeletedFalseOrElseThrow(storeId);
 
         // 메뉴를 MenuResponseDto에 담고 리스트로 변환 (N+1 문제 해결 예정)
         List<MenuDto> menuDtoList = store.getMenus()
@@ -146,7 +146,7 @@ public class StoreService {
     public void updateStore(Long userId, UpdateStoreRequestDto requestDto, Long storeId) {
 
         // 가게 찾기
-        Store store = storeRepository.findByIdOrElseThrow(storeId);
+        Store store = storeRepository.findByIdAndIsDeletedFalseOrElseThrow(storeId);
 
         // 유저가 가게를 등록한 유저인지 검증
         if (!userId.equals(store.getUser().getId())) {
@@ -178,7 +178,7 @@ public class StoreService {
             throw new ForbiddenException("가게 사장님이 아닙니다.");
         }
 
-        Store store = storeRepository.findByIdOrElseThrow(storeId);
+        Store store = storeRepository.findByIdAndIsDeletedFalseOrElseThrow(storeId);
 
         // 유저가 가게를 등록한 유저인지 검증
         if (!user.getId().equals(store.getUser().getId())) {

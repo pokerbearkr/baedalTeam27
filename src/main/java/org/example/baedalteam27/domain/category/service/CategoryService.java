@@ -1,6 +1,5 @@
 package org.example.baedalteam27.domain.category.service;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.example.baedalteam27.domain.category.dto.request.CategoryRequestDto;
 import org.example.baedalteam27.domain.category.dto.response.CategoryResponseDto;
@@ -13,6 +12,7 @@ import org.example.baedalteam27.domain.user.entitiy.User;
 import org.example.baedalteam27.domain.user.repository.UserRepository;
 import org.example.baedalteam27.global.exception.ForbiddenException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
