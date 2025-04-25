@@ -24,7 +24,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalTime;
 import java.util.List;
 
-import static org.example.baedalteam27.domain.category.service.CategoryService.isValidCategory;
 
 @Service
 @RequiredArgsConstructor
@@ -41,10 +40,7 @@ public class StoreService {
         // 유저, 카테고리 조회
         User user = userRepository.getUserByUserId(userId);
 
-        Category category = categoryRepository.findByIdOrElseThrow(requestDto.getCategoryId());
-
-        // 삭제된 카테고리인지 검증
-        isValidCategory(category);
+        Category category = categoryRepository.findByIdAndIsDeletedFalseOrElseThrow(requestDto.getCategoryId());
 
         // 유저가 사장님 권한을 가졌는지 검증
         if (!user.getRole().equals(UserRole.OWNER)) {
@@ -98,8 +94,6 @@ public class StoreService {
 
         // 카테고리에 해당하는 가게명
         if (categoryId != null) {
-            // 삭제된 카테고리인지 검증
-            isValidCategory(categoryRepository.findByIdOrElseThrow(categoryId));
             return storeRepository.findByCategoryIdAndIsDeletedFalse(categoryId, pageable)
                     .map(store -> new StoreNameResponseDto(store.getId(), store.getStoreName()));
         }
@@ -160,10 +154,7 @@ public class StoreService {
         }
 
         // 카테고리 조회
-        Category category = categoryRepository.findByIdOrElseThrow(requestDto.getCategoryId());
-
-        // 삭제된 카테고리인지 검증
-        isValidCategory(category);
+        Category category = categoryRepository.findByIdAndIsDeletedFalseOrElseThrow(requestDto.getCategoryId());
 
         // 가게 수정된 정보 저장
         store.update(

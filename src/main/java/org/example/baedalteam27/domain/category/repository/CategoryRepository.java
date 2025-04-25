@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 public interface CategoryRepository extends JpaRepository<Category, Long> {
-    default Category findByIdOrElseThrow(Long categoryid) {
+    default Category findByIdAndIsDeletedFalseOrElseThrow(Long categoryid) {
         return findById(categoryid).orElseThrow(() -> new IllegalArgumentException("카테고리가 존재 하지 않습니다."));
     }
 }

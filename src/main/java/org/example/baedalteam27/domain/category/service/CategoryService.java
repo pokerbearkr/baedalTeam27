@@ -59,15 +59,12 @@ public class CategoryService {
             throw new ForbiddenException("관리자 권한이 아닙니다.");
         }
 
-        Category category = categoryRepository.findByIdOrElseThrow(categoryid);
+        Category category = categoryRepository.findByIdAndIsDeletedFalseOrElseThrow(categoryid);
 
         // 이름 중복 검증
         if (requestDto.getName().equals(category.getName())) {
             throw new IllegalArgumentException("중복된 이름입니다.");
         }
-
-        // 삭제된 카테고리인지 검증
-        isValidCategory(category);
 
         category.update(requestDto.getName());
     }
@@ -81,18 +78,8 @@ public class CategoryService {
             throw new ForbiddenException("관리자 권한이 아닙니다.");
         }
 
-        Category category = categoryRepository.findByIdOrElseThrow(categoryid);
-
-        // 삭제된 카테고리인지 검증
-        isValidCategory(category);
+        Category category = categoryRepository.findByIdAndIsDeletedFalseOrElseThrow(categoryid);
 
         categoryRepository.delete(category);
-    }
-
-    // 삭제된 카테고리인지 검증
-    public static void isValidCategory (Category category) {
-        if (category.isDeleted()) {
-            throw new IllegalArgumentException("이미 삭제된 카테고리 입니다.");
-        }
     }
 }
