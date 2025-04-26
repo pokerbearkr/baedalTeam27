@@ -28,13 +28,6 @@ public class AuthService {
 	// 회원가입
 	@Transactional
 	public void signup(SignupRequestDto dto) {
-		if (!isValidEmail(dto.getEmail())) {
-			throw new CustomException(ErrorCode.INVALID_EMAIL_FORMAT);
-		}
-
-		if (!isValidPassword(dto.getPassword())) {
-			throw new CustomException(ErrorCode.INVALID_PASSWORD_FORMAT);
-		}
 
 		if (userRepository.existsByEmail(dto.getEmail())) {
 			throw new CustomException(ErrorCode.EMAIL_ALREADY_EXISTS);
@@ -79,9 +72,6 @@ public class AuthService {
 
 	// 이메일 중복 체크
 	public MailCheckResponseDto mailCheck(MailCheckRequestDto dto) {
-		if (!isValidEmail(dto.getEmail())) {
-			throw new CustomException(ErrorCode.INVALID_EMAIL_FORMAT);
-		}
 
 		boolean exists = userRepository.existsByEmail(dto.getEmail());
 		if (exists) {
@@ -98,10 +88,6 @@ public class AuthService {
 
 		if (!passwordEncoder.matches(dto.getNowPassword(), user.getPassword())) {
 			throw new CustomException(ErrorCode.INVALID_PASSWORD);
-		}
-
-		if (!isValidPassword(dto.getNewPassword())) {
-			throw new CustomException(ErrorCode.INVALID_PASSWORD_FORMAT);
 		}
 
 		user.changePassword(passwordEncoder.encode(dto.getNewPassword()));
@@ -139,17 +125,4 @@ public class AuthService {
 		return tokenMap;
 	}
 
-	// 이메일 유효성 체크
-	private boolean isValidEmail(String email) {
-		return email.matches("^[A-Za-z0-9+_.-]+@(.+)$");
-	}
-
-	// 비밀번호 유효성 체크
-	private boolean isValidPassword(String pw) {
-		return pw.length() >= 8 &&
-				pw.matches(".*[A-Z].*") &&
-				pw.matches(".*[a-z].*") &&
-				pw.matches(".*[0-9].*") &&
-				pw.matches(".*[!@#$%^&*()].*");
-	}
 }
