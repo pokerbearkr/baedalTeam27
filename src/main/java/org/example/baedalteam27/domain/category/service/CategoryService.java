@@ -10,7 +10,8 @@ import org.example.baedalteam27.domain.category.repository.CategoryRepository;
 import org.example.baedalteam27.domain.user.UserRole;
 import org.example.baedalteam27.domain.user.entitiy.User;
 import org.example.baedalteam27.domain.user.repository.UserRepository;
-import org.example.baedalteam27.global.exception.ForbiddenException;
+import org.example.baedalteam27.global.exception.CustomException;
+import org.example.baedalteam27.global.exception.ErrorCode;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,7 +31,7 @@ public class CategoryService {
         User user = userRepository.getUserByUserId(userId);
         // 권한 확인
         if (!user.getRole().equals(UserRole.ADMIN)) {
-            throw new ForbiddenException("관리자 권한이 아닙니다.");
+            throw new CustomException(ErrorCode.NOT_ADMIN);
         }
 
         Category category = new Category(requestDto.getName());
@@ -56,14 +57,14 @@ public class CategoryService {
         User user = userRepository.getUserByUserId(userId);
         // 권한 확인
         if (!user.getRole().equals(UserRole.ADMIN)) {
-            throw new ForbiddenException("관리자 권한이 아닙니다.");
+            throw new CustomException(ErrorCode.NOT_ADMIN);
         }
 
         Category category = categoryRepository.findByIdAndIsDeletedFalseOrElseThrow(categoryid);
 
         // 이름 중복 검증
         if (requestDto.getName().equals(category.getName())) {
-            throw new IllegalArgumentException("중복된 이름입니다.");
+            throw new CustomException(ErrorCode.CATEGORY_NAME_ALREADY_EXISTS);
         }
 
         category.update(requestDto.getName());
@@ -75,7 +76,7 @@ public class CategoryService {
         User user = userRepository.getUserByUserId(userId);
         // 권한 확인
         if (!user.getRole().equals(UserRole.ADMIN)) {
-            throw new ForbiddenException("관리자 권한이 아닙니다.");
+            throw new CustomException(ErrorCode.NOT_ADMIN);
         }
 
         Category category = categoryRepository.findByIdAndIsDeletedFalseOrElseThrow(categoryid);
