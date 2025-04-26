@@ -3,6 +3,7 @@ package org.example.baedalteam27.domain.auth.controller;
 import java.util.Map;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.baedalteam27.domain.auth.dto.LoginRequestDto;
 import org.example.baedalteam27.domain.auth.dto.LoginResponseDto;
@@ -28,7 +29,7 @@ public class AuthController {
 
 	// 회원가입
 	@PostMapping("/signup")
-	public ResponseEntity<Void> signup(@RequestBody SignupRequestDto dto) {
+	public ResponseEntity<Void> signup(@Valid @RequestBody SignupRequestDto dto) {
 		authService.signup(dto);
 		return ResponseEntity.ok().build();
 	}
@@ -51,7 +52,7 @@ public class AuthController {
 
 	// 메일 중복 체크
 	@PostMapping("/mail-check")
-	public ResponseEntity<MailCheckResponseDto> mailCheck(@RequestBody MailCheckRequestDto dto) {
+	public ResponseEntity<MailCheckResponseDto> mailCheck(@Valid @RequestBody MailCheckRequestDto dto) {
 		MailCheckResponseDto response = authService.mailCheck(dto);
 		return ResponseEntity.ok(response);
 	}
@@ -60,7 +61,7 @@ public class AuthController {
 	@PatchMapping("/password")
 	public ResponseEntity<PasswordChangeResponseDto> passwordChange(
 		@LoginUser Long userId,
-		@RequestBody PasswordChangeRequestDto dto
+		@Valid @RequestBody PasswordChangeRequestDto dto
 	) {
 		PasswordChangeResponseDto response = authService.passwordChange(userId, dto);
 		return ResponseEntity.ok(response);
