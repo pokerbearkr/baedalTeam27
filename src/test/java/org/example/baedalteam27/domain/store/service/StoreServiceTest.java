@@ -294,6 +294,17 @@ class StoreServiceTest {
     }
 
     @Test
+    void findStore_실패_storeId가_null인경우() {
+        // given
+        Long storeId = null;
+
+        // when
+        // then
+        CustomException customException = assertThrows(CustomException.class, () -> storeService.findStore(storeId));
+        assertEquals(ErrorCode.NULL_STORE_ID, customException.getErrorCode());
+    }
+
+    @Test
     void updateStore() {
     }
 
