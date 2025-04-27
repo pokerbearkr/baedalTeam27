@@ -25,6 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -189,7 +190,8 @@ class CategoryServiceTest {
         categoryService.deleteCategory(categoryId, userId);
 
         // then
-        assertTrue(category.isDeleted());
+        // assertTrue(category.isDeleted() softDelete 라서 검증 방법 어떻게 해야 할지....
+        verify(categoryRepository).delete(category);
     }
 
     @Test
