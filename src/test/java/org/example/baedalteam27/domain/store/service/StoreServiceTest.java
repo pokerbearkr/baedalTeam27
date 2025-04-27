@@ -383,4 +383,20 @@ class StoreServiceTest {
         // then
         verify(storeRepository).delete(store);
     }
+
+    @Test
+    void deleteStore_실패_USER인경우() {
+        // given
+        Long userId = 1L;
+        User user = new User("email", "password", UserRole.USER, "", "");
+        ReflectionTestUtils.setField(user, "id", userId);
+        given(userRepository.getUserByUserId(userId)).willReturn(user);
+
+        Long storeId = 1L;
+
+        // when
+        // then
+        CustomException customException = assertThrows(CustomException.class, () -> storeService.deleteStore(userId, storeId));
+        assertEquals(ErrorCode.NOT_OWNER, customException.getErrorCode());
+    }
 }
