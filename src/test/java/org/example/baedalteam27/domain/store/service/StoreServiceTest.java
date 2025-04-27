@@ -152,10 +152,11 @@ class StoreServiceTest {
         // given
         Long userId = 1L;
         User user = new User("email", "password", UserRole.OWNER, "", "");
-        given(userRepository.getUserByUserId(userId)).willReturn(user);
+        ReflectionTestUtils.setField(user, "id", userId);
 
         Long categoryId = 1L;
         Category category = new Category("한식");
+        ReflectionTestUtils.setField(category, "id", categoryId);
 
         LocalTime openTime = LocalTime.parse("16:00:00");
         LocalTime closedTime = LocalTime.parse("22:00:00");
@@ -184,10 +185,11 @@ class StoreServiceTest {
         // given
         Long userId = 1L;
         User user = new User("email", "password", UserRole.OWNER, "", "");
-        given(userRepository.getUserByUserId(userId)).willReturn(user);
+        ReflectionTestUtils.setField(user, "id", userId);
 
         Long categoryId = 1L;
         Category category = new Category("한식");
+        ReflectionTestUtils.setField(category, "id", categoryId);
 
         LocalTime openTime = LocalTime.parse("16:00:00");
         LocalTime closedTime = LocalTime.parse("22:00:00");
@@ -216,10 +218,11 @@ class StoreServiceTest {
         // given
         Long userId = 1L;
         User user = new User("email", "password", UserRole.OWNER, "", "");
-        given(userRepository.getUserByUserId(userId)).willReturn(user);
+        ReflectionTestUtils.setField(user, "id", userId);
 
         Long categoryId = 1L;
         Category category = new Category("한식");
+        ReflectionTestUtils.setField(category, "id", categoryId);
 
         LocalTime openTime = LocalTime.parse("16:00:00");
         LocalTime closedTime = LocalTime.parse("22:00:00");
