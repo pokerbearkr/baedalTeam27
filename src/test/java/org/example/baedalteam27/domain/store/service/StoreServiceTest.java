@@ -377,7 +377,13 @@ class StoreServiceTest {
         ReflectionTestUtils.setField(store, "id", storeId);
         given(storeRepository.findByIdAndIsDeletedFalseOrElseThrow(storeId)).willReturn(store);
 
-        Menu menu = new Menu(store, "김밥", 5000, "김, 햄, 시금치 등등", false);
+        Menu menu = Menu.builder()
+                .store(store)
+                .name("김밥")
+                .price(5000)
+                .description("김, 햄, 시금치 등등")
+                .isSoldOut(false)
+                .build();
         ReflectionTestUtils.setField(menu, "id", 1L);
         List<Menu> menus = Arrays.asList(menu);
         ReflectionTestUtils.setField(store, "menus", menus);
