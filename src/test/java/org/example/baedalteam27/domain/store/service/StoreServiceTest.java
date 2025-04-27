@@ -34,6 +34,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.ArgumentMatchers.any;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -360,6 +361,26 @@ class StoreServiceTest {
     }
 
     @Test
-    void deleteStore() {
+    void deleteStore_성공() {
+        // given
+        Long userId = 1L;
+        User user = new User("email", "password", UserRole.OWNER, "", "");
+        ReflectionTestUtils.setField(user, "id", userId);
+        given(userRepository.getUserByUserId(userId)).willReturn(user);
+
+        Long categoryId = 1L;
+        Category category = new Category("한식");
+
+        Long storeId = 1L;
+        LocalTime openTime = LocalTime.parse("16:00:00");
+        LocalTime closedTime = LocalTime.parse("22:00:00");
+        Store store = new Store("김밥집", "한국", "010", openTime, closedTime, 7000L, user, category);
+        given(storeRepository.findByIdAndIsDeletedFalseOrElseThrow(storeId)).willReturn(store);
+
+        // when
+        storeService.deleteStore(userId, storeId);
+
+        // then
+        verify(storeRepository).delete(store);
     }
 }
