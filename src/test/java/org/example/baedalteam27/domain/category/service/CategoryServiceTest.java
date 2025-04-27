@@ -141,6 +141,22 @@ class CategoryServiceTest {
     }
 
     @Test
+    void updateCategory_실패_OWNER인_경우() {
+        // given
+        Long categoryId = 1L;
+        UpdateCategoryRequestDto dto = new UpdateCategoryRequestDto("양식");
+
+        Long userId = 1L;
+        User user = new User("email", "password", UserRole.OWNER, "", "");
+        given(userRepository.getUserByUserId(userId)).willReturn(user);
+
+        // when
+        // then
+        CustomException customException = assertThrows(CustomException.class, () -> categoryService.updateCategory(categoryId, dto, userId));
+        assertEquals(ErrorCode.NOT_ADMIN, customException.getErrorCode());
+    }
+
+    @Test
     void deleteCategory() {
     }
 }
