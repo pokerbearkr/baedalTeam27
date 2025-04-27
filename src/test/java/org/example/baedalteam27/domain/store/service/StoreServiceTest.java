@@ -337,6 +337,29 @@ class StoreServiceTest {
     }
 
     @Test
+    void updateStore_실패_가게를_등록한_사장이_아닌경우() {
+        // given
+        Long userId = 2L;
+        User user = new User("email", "password", UserRole.OWNER, "", "");
+        ReflectionTestUtils.setField(user, "id", 1L);
+
+        Long categoryId = 1L;
+        Category category = new Category("한식");
+
+        Long storeId = 1L;
+        LocalTime openTime = LocalTime.parse("16:00:00");
+        LocalTime closedTime = LocalTime.parse("22:00:00");
+        Store store = new Store("김밥집", "한국", "010", openTime, closedTime, 7000L, user, category);
+        given(storeRepository.findByIdAndIsDeletedFalseOrElseThrow(storeId)).willReturn(store);
+        UpdateStoreRequestDto updateStoreRequestDto = new UpdateStoreRequestDto("김밥집1", "한국1", "0101", openTime, closedTime, 70000L, categoryId);
+
+        // when
+        // then
+        CustomException customException = assertThrows(CustomException.class, () -> storeService.updateStore(userId, updateStoreRequestDto, storeId));
+        assertEquals(ErrorCode.NOT_STORE_OWNER_MODIFY, customException.getErrorCode());
+    }
+
+    @Test
     void deleteStore() {
     }
 }
