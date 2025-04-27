@@ -2,10 +2,13 @@ package org.example.baedalteam27.domain.store.service;
 
 import org.example.baedalteam27.domain.category.entity.Category;
 import org.example.baedalteam27.domain.category.repository.CategoryRepository;
+import org.example.baedalteam27.domain.menu.entity.Menu;
 import org.example.baedalteam27.domain.store.dto.request.SaveStoreRequestDto;
 import org.example.baedalteam27.domain.store.dto.response.SaveStoreResponseDto;
 import org.example.baedalteam27.domain.store.dto.response.StoreNameResponseDto;
+import org.example.baedalteam27.domain.store.dto.response.StoreResponseDto;
 import org.example.baedalteam27.domain.store.entity.Store;
+import org.example.baedalteam27.domain.store.enums.Status;
 import org.example.baedalteam27.domain.store.repository.StoreRepository;
 import org.example.baedalteam27.domain.user.UserRole;
 import org.example.baedalteam27.domain.user.entitiy.User;
@@ -252,7 +255,42 @@ class StoreServiceTest {
     }
 
     @Test
-    void findStore() {
+    void findStore_성공() {
+        // given
+        Category category = new Category("한식");
+
+        User user = new User("email", "password", UserRole.USER, "", "");
+
+        Long storeId = 1L;
+        LocalTime openTime = LocalTime.parse("16:00:00");
+        LocalTime closedTime = LocalTime.parse("22:00:00");
+        Store store = new Store("김밥집", "한국", "010", openTime, closedTime, 7000L, user, category);
+        ReflectionTestUtils.setField(store, "id", storeId);
+        given(storeRepository.findByIdAndIsDeletedFalseOrElseThrow(storeId)).willReturn(store);
+
+        Menu menu = new Menu(store, "김밥", 5000, "김, 햄, 시금치 등등", false);
+        ReflectionTestUtils.setField(menu, "id", 1L);
+        List<Menu> menus = Arrays.asList(menu);
+        ReflectionTestUtils.setField(store, "menus", menus);
+
+        Status currentStatus = store.getCurrentStatus(LocalTime.now());
+
+        // when
+        StoreResponseDto storeResponseDto = storeService.findStore(storeId);
+
+        // then
+        assertEquals(1L, storeResponseDto.getId());
+        assertEquals("김밥집", storeResponseDto.getStoreName());
+        assertEquals("한식", storeResponseDto.getCategoryName());
+        assertEquals("한국", storeResponseDto.getAddress());
+        assertEquals("010", storeResponseDto.getPhoneNumber());
+        assertEquals(openTime, storeResponseDto.getOpenTime());
+        assertEquals(closedTime, storeResponseDto.getClosedTime());
+        assertEquals(7000L, storeResponseDto.getMinOrderPrice());
+        assertEquals(currentStatus.toString(), storeResponseDto.getStatus());
+        assertEquals("김밥", storeResponseDto.getMenus().get(0).getName());
+        assertEquals(5000, storeResponseDto.getMenus().get(0).getPrice());
+        assertEquals("김, 햄, 시금치 등등", storeResponseDto.getMenus().get(0).getDescription());
     }
 
     @Test
