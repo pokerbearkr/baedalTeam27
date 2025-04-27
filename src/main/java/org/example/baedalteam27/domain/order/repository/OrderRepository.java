@@ -30,4 +30,11 @@ public interface OrderRepository extends JpaRepository<Order,Long> {
                 .orElseThrow(() -> new RuntimeException("주문이 없습니다."));
     }
 
+    @Query("SELECT o FROM Order o JOIN FETCH o.store " +
+            "JOIN FETCH o.user "+
+            "WHERE o.id =:orderId")
+    default Order findByIdOrElseThrow(@Param("orderId")Long id){
+        return findById(id)
+                .orElseThrow(()-> new RuntimeException("주문이 없습니다"));
+    }
 }
