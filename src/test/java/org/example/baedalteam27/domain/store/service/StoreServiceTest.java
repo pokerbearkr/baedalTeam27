@@ -415,4 +415,28 @@ class StoreServiceTest {
         CustomException customException = assertThrows(CustomException.class, () -> storeService.deleteStore(userId, storeId));
         assertEquals(ErrorCode.NOT_OWNER, customException.getErrorCode());
     }
+
+    @Test
+    void deleteStore_실패_가게를_등록한_사장이_아닌경우() {
+        // given
+        Long userId = 1L;
+        User user1 = new User("email", "password", UserRole.OWNER, "", "");
+        User user2 = new User("email", "password", UserRole.OWNER, "", "");
+        ReflectionTestUtils.setField(user1, "id", userId);
+        ReflectionTestUtils.setField(user2, "id", 2L);
+        given(userRepository.getUserByUserId(userId)).willReturn(user1);
+
+        Category category = new Category("한식");
+
+        Long storeId = 1L;
+        LocalTime openTime = LocalTime.parse("16:00:00");
+        LocalTime closedTime = LocalTime.parse("22:00:00");
+        Store store = new Store("김밥집", "한국", "010", openTime, closedTime, 7000L, user2, category);
+        given(storeRepository.findByIdAndIsDeletedFalseOrElseThrow(storeId)).willReturn(store);
+
+        // when
+        // then
+        CustomException customException = assertThrows(CustomException.class, () -> storeService.deleteStore(userId, storeId));
+        assertEquals(ErrorCode.NOT_STORE_OWNER_DELETE, customException.getErrorCode());
+    }
 }
