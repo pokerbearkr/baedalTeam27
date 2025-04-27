@@ -16,7 +16,8 @@ import org.example.baedalteam27.domain.store.repository.StoreRepository;
 import org.example.baedalteam27.domain.user.UserRole;
 import org.example.baedalteam27.domain.user.entitiy.User;
 import org.example.baedalteam27.domain.user.repository.UserRepository;
-import org.example.baedalteam27.global.exception.ForbiddenException;
+import org.example.baedalteam27.global.exception.CustomException;
+import org.example.baedalteam27.global.exception.ErrorCode;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -45,13 +46,13 @@ public class StoreService {
 
         // 유저가 사장님 권한을 가졌는지 검증
         if (!user.getRole().equals(UserRole.OWNER)) {
-            throw new ForbiddenException("가게를 등록할 권한이 없습니다.");
+            throw new CustomException(ErrorCode.NOT_OWNER);
         }
 
-        // 소요한 가게가 3개 이하인지 검증
+        // 소유한 가게가 3개 이하인지 검증
         int storeCount = storeRepository.countByUserIdAndIsDeletedFalse(userId);
         if (storeCount >= 3) {
-            throw new IllegalArgumentException("가게는 최대 3개까지만 등록할 수 있습니다.");
+            throw new CustomException(ErrorCode.STORE_LIMIT_EXCEPTION);
         }
 
         Store store = Store.builder()
@@ -84,7 +85,7 @@ public class StoreService {
     public Page<StoreNameResponseDto> findStores(Long categoryId, String storeName, Pageable pageable) {
         // 둘 다 입력 했을 때 예외처리
         if (categoryId != null && storeName != null) {
-            throw new IllegalArgumentException("카테고리 또는 가게명 중 하나만 입력! 또는 둘 다 입력X");
+            throw new CustomException(ErrorCode.INVALID_PARAMETER);
         }
 
         // 입력받은 단어가 들어가는 가게명
@@ -108,7 +109,7 @@ public class StoreService {
     public StoreResponseDto findStore(Long storeId) {
         // 필수값 검증
         if (storeId == null) {
-            throw new IllegalArgumentException("가게 번호는 필수!");
+            throw new CustomException(ErrorCode.NULL_STORE_ID);
         }
 
         // 전체에서 가게 조회
@@ -151,7 +152,7 @@ public class StoreService {
 
         // 유저가 가게를 등록한 유저인지 검증
         if (!userId.equals(store.getUser().getId())) {
-            throw new ForbiddenException("해당 가게에 대한 수정 권한이 없습니다.");
+            throw new CustomException(ErrorCode.NOT_STORE_OWNER_MODIFY);
         }
 
         // 카테고리 조회
@@ -176,19 +177,19 @@ public class StoreService {
 
         // 유저가 사장님 권한을 가졌는지 검증
         if (!user.getRole().equals(UserRole.OWNER)) {
-            throw new ForbiddenException("가게 사장님이 아닙니다.");
+            throw new CustomException(ErrorCode.NOT_OWNER);
         }
 
         Store store = storeRepository.findByIdAndIsDeletedFalseOrElseThrow(storeId);
 
         // 유저가 가게를 등록한 유저인지 검증
         if (!user.getId().equals(store.getUser().getId())) {
-            throw new ForbiddenException("해당 가게에 대한 삭제 권한이 없습니다.");
+            throw new CustomException(ErrorCode.NOT_STORE_OWNER_DELETE);
         }
 
         // 폐업한 가게를 다시 폐업하려고 할 때
         if (store.isDeleted()) {
-            throw new IllegalArgumentException("이미 폐업한 가게 입니다.");
+            throw new CustomException(ErrorCode.ALREADY_STORE_DELETED);
         }
 
         storeRepository.delete(store);
