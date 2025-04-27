@@ -2,6 +2,7 @@ package org.example.baedalteam27.domain.category.service;
 
 import org.example.baedalteam27.domain.category.dto.request.CategoryRequestDto;
 import org.example.baedalteam27.domain.category.dto.response.CategoryResponseDto;
+import org.example.baedalteam27.domain.category.dto.response.FindCategoriesResponseDto;
 import org.example.baedalteam27.domain.category.entity.Category;
 import org.example.baedalteam27.domain.category.repository.CategoryRepository;
 import org.example.baedalteam27.domain.user.UserRole;
@@ -16,9 +17,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.util.Arrays;
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
@@ -86,7 +89,19 @@ class CategoryServiceTest {
     }
 
     @Test
-    void findCategories() {
+    void findCategories_성공() {
+        // given
+        Category category = new Category("한식");
+        Category category2 = new Category("일식");
+        List<Category> categories = Arrays.asList(category, category2);
+        given(categoryRepository.findAll()).willReturn(categories);
+
+        // when
+        List<FindCategoriesResponseDto> findCategoriesResponseDtos = categoryService.findCategories();
+
+        // then
+        assertEquals("한식", findCategoriesResponseDtos.get(0).getName());
+        assertEquals("일식", findCategoriesResponseDtos.get(1).getName());
     }
 
     @Test
