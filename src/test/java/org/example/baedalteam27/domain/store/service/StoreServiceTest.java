@@ -69,7 +69,16 @@ class StoreServiceTest {
 
         LocalTime openTime = LocalTime.parse("16:00:00");
         LocalTime closedTime = LocalTime.parse("22:00:00");
-        Store store = new Store("김밥집", "한국", "010", openTime, closedTime, 7000L, user, category);
+        Store store = Store.builder()
+                .storeName("김밥집")
+                .address("한국")
+                .phoneNumber("010")
+                .openTime(openTime)
+                .closedTime(closedTime)
+                .minOrderPrice(7000L)
+                .user(user)
+                .category(category)
+                .build();
         SaveStoreRequestDto dto = new SaveStoreRequestDto("김밥집", "한국", "010", openTime, closedTime, 7000L, categoryId);
         given(storeRepository.save(any(Store.class))).willReturn(store);
 
@@ -180,9 +189,27 @@ class StoreServiceTest {
 
         LocalTime openTime = LocalTime.parse("16:00:00");
         LocalTime closedTime = LocalTime.parse("22:00:00");
-        Store store1 = new Store("김밥집1", "한국", "010", openTime, closedTime, 7000L, user, category);
+        Store store1 = Store.builder()
+                .storeName("김밥집1")
+                .address("한국")
+                .phoneNumber("010")
+                .openTime(openTime)
+                .closedTime(closedTime)
+                .minOrderPrice(7000L)
+                .user(user)
+                .category(category)
+                .build();
         ReflectionTestUtils.setField(store1, "id", 1L);
-        Store store2 = new Store("김밥집2", "한국", "010", openTime, closedTime, 7000L, user, category);
+        Store store2 = Store.builder()
+                .storeName("김밥집2")
+                .address("한국")
+                .phoneNumber("010")
+                .openTime(openTime)
+                .closedTime(closedTime)
+                .minOrderPrice(7000L)
+                .user(user)
+                .category(category)
+                .build();
         ReflectionTestUtils.setField(store2, "id", 2L);
 
         List<Store> storeList = Arrays.asList(store1, store2);
@@ -217,9 +244,27 @@ class StoreServiceTest {
 
         LocalTime openTime = LocalTime.parse("16:00:00");
         LocalTime closedTime = LocalTime.parse("22:00:00");
-        Store store1 = new Store("김밥집1", "한국", "010", openTime, closedTime, 7000L, user, category);
+        Store store1 = Store.builder()
+                .storeName("김밥집1")
+                .address("한국")
+                .phoneNumber("010")
+                .openTime(openTime)
+                .closedTime(closedTime)
+                .minOrderPrice(7000L)
+                .user(user)
+                .category(category)
+                .build();
         ReflectionTestUtils.setField(store1, "id", 1L);
-        Store store2 = new Store("김밥집2", "한국", "010", openTime, closedTime, 7000L, user, category);
+        Store store2 = Store.builder()
+                .storeName("김밥집2")
+                .address("한국")
+                .phoneNumber("010")
+                .openTime(openTime)
+                .closedTime(closedTime)
+                .minOrderPrice(7000L)
+                .user(user)
+                .category(category)
+                .build();
         ReflectionTestUtils.setField(store2, "id", 2L);
 
         List<Store> storeList = Arrays.asList(store1, store2);
@@ -254,9 +299,27 @@ class StoreServiceTest {
 
         LocalTime openTime = LocalTime.parse("16:00:00");
         LocalTime closedTime = LocalTime.parse("22:00:00");
-        Store store1 = new Store("김밥집1", "한국", "010", openTime, closedTime, 7000L, user, category);
+        Store store1 = Store.builder()
+                .storeName("김밥집1")
+                .address("한국")
+                .phoneNumber("010")
+                .openTime(openTime)
+                .closedTime(closedTime)
+                .minOrderPrice(7000L)
+                .user(user)
+                .category(category)
+                .build();
         ReflectionTestUtils.setField(store1, "id", 1L);
-        Store store2 = new Store("김밥집2", "한국", "010", openTime, closedTime, 7000L, user, category);
+        Store store2 = Store.builder()
+                .storeName("김밥집2")
+                .address("한국")
+                .phoneNumber("010")
+                .openTime(openTime)
+                .closedTime(closedTime)
+                .minOrderPrice(7000L)
+                .user(user)
+                .category(category)
+                .build();
         ReflectionTestUtils.setField(store2, "id", 2L);
 
         List<Store> storeList = Arrays.asList(store1, store2);
@@ -301,7 +364,16 @@ class StoreServiceTest {
         Long storeId = 1L;
         LocalTime openTime = LocalTime.parse("16:00:00");
         LocalTime closedTime = LocalTime.parse("22:00:00");
-        Store store = new Store("김밥집", "한국", "010", openTime, closedTime, 7000L, user, category);
+        Store store = Store.builder()
+                .storeName("김밥집")
+                .address("한국")
+                .phoneNumber("010")
+                .openTime(openTime)
+                .closedTime(closedTime)
+                .minOrderPrice(7000L)
+                .user(user)
+                .category(category)
+                .build();
         ReflectionTestUtils.setField(store, "id", storeId);
         given(storeRepository.findByIdAndIsDeletedFalseOrElseThrow(storeId)).willReturn(store);
 
@@ -359,7 +431,16 @@ class StoreServiceTest {
         Long storeId = 1L;
         LocalTime openTime = LocalTime.parse("16:00:00");
         LocalTime closedTime = LocalTime.parse("22:00:00");
-        Store store = new Store("김밥집", "한국", "010", openTime, closedTime, 7000L, user, category);
+        Store store = Store.builder()
+                .storeName("김밥집")
+                .address("한국")
+                .phoneNumber("010")
+                .openTime(openTime)
+                .closedTime(closedTime)
+                .minOrderPrice(7000L)
+                .user(user)
+                .category(category)
+                .build();
         given(storeRepository.findByIdAndIsDeletedFalseOrElseThrow(storeId)).willReturn(store);
         UpdateStoreRequestDto updateStoreRequestDto = new UpdateStoreRequestDto("김밥집1", "한국1", "0101", openTime, closedTime, 70000L, categoryId);
 
@@ -393,7 +474,16 @@ class StoreServiceTest {
         Long storeId = 1L;
         LocalTime openTime = LocalTime.parse("16:00:00");
         LocalTime closedTime = LocalTime.parse("22:00:00");
-        Store store = new Store("김밥집", "한국", "010", openTime, closedTime, 7000L, user, category);
+        Store store = Store.builder()
+                .storeName("김밥집")
+                .address("한국")
+                .phoneNumber("010")
+                .openTime(openTime)
+                .closedTime(closedTime)
+                .minOrderPrice(7000L)
+                .user(user)
+                .category(category)
+                .build();
         given(storeRepository.findByIdAndIsDeletedFalseOrElseThrow(storeId)).willReturn(store);
         UpdateStoreRequestDto updateStoreRequestDto = new UpdateStoreRequestDto("김밥집1", "한국1", "0101", openTime, closedTime, 70000L, categoryId);
 
@@ -421,7 +511,16 @@ class StoreServiceTest {
         Long storeId = 1L;
         LocalTime openTime = LocalTime.parse("16:00:00");
         LocalTime closedTime = LocalTime.parse("22:00:00");
-        Store store = new Store("김밥집", "한국", "010", openTime, closedTime, 7000L, user, category);
+        Store store = Store.builder()
+                .storeName("김밥집")
+                .address("한국")
+                .phoneNumber("010")
+                .openTime(openTime)
+                .closedTime(closedTime)
+                .minOrderPrice(7000L)
+                .user(user)
+                .category(category)
+                .build();
         given(storeRepository.findByIdAndIsDeletedFalseOrElseThrow(storeId)).willReturn(store);
 
         // when
@@ -494,7 +593,16 @@ class StoreServiceTest {
         Long storeId = 1L;
         LocalTime openTime = LocalTime.parse("16:00:00");
         LocalTime closedTime = LocalTime.parse("22:00:00");
-        Store store = new Store("김밥집", "한국", "010", openTime, closedTime, 7000L, user2, category);
+        Store store = Store.builder()
+                .storeName("김밥집")
+                .address("한국")
+                .phoneNumber("010")
+                .openTime(openTime)
+                .closedTime(closedTime)
+                .minOrderPrice(7000L)
+                .user(user2)
+                .category(category)
+                .build();
         given(storeRepository.findByIdAndIsDeletedFalseOrElseThrow(storeId)).willReturn(store);
 
         // when
@@ -520,7 +628,16 @@ class StoreServiceTest {
         Long storeId = 1L;
         LocalTime openTime = LocalTime.parse("16:00:00");
         LocalTime closedTime = LocalTime.parse("22:00:00");
-        Store store = new Store("김밥집", "한국", "010", openTime, closedTime, 7000L, user, category);
+        Store store = Store.builder()
+                .storeName("김밥집")
+                .address("한국")
+                .phoneNumber("010")
+                .openTime(openTime)
+                .closedTime(closedTime)
+                .minOrderPrice(7000L)
+                .user(user)
+                .category(category)
+                .build();
         ReflectionTestUtils.setField(store, "isDeleted", true);
         given(storeRepository.findByIdAndIsDeletedFalseOrElseThrow(storeId)).willReturn(store);
 
