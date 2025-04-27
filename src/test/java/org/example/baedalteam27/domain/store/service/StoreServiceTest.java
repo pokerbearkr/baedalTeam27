@@ -4,6 +4,7 @@ import org.example.baedalteam27.domain.category.entity.Category;
 import org.example.baedalteam27.domain.category.repository.CategoryRepository;
 import org.example.baedalteam27.domain.menu.entity.Menu;
 import org.example.baedalteam27.domain.store.dto.request.SaveStoreRequestDto;
+import org.example.baedalteam27.domain.store.dto.request.UpdateStoreRequestDto;
 import org.example.baedalteam27.domain.store.dto.response.SaveStoreResponseDto;
 import org.example.baedalteam27.domain.store.dto.response.StoreNameResponseDto;
 import org.example.baedalteam27.domain.store.dto.response.StoreResponseDto;
@@ -305,7 +306,34 @@ class StoreServiceTest {
     }
 
     @Test
-    void updateStore() {
+    void updateStore_성공() {
+        // given
+        Long userId = 1L;
+        User user = new User("email", "password", UserRole.OWNER, "", "");
+        ReflectionTestUtils.setField(user, "id", userId);
+
+        Long categoryId = 1L;
+        Category category = new Category("한식");
+        given(categoryRepository.findByIdAndIsDeletedFalseOrElseThrow(categoryId)).willReturn(category);
+
+        Long storeId = 1L;
+        LocalTime openTime = LocalTime.parse("16:00:00");
+        LocalTime closedTime = LocalTime.parse("22:00:00");
+        Store store = new Store("김밥집", "한국", "010", openTime, closedTime, 7000L, user, category);
+        given(storeRepository.findByIdAndIsDeletedFalseOrElseThrow(storeId)).willReturn(store);
+        UpdateStoreRequestDto updateStoreRequestDto = new UpdateStoreRequestDto("김밥집1", "한국1", "0101", openTime, closedTime, 70000L, categoryId);
+
+        // when
+        storeService.updateStore(userId, updateStoreRequestDto, storeId);
+
+        // then
+        assertEquals("김밥집1", store.getStoreName());
+        assertEquals("한국1", store.getAddress());
+        assertEquals("0101", store.getPhoneNumber());
+        assertEquals(openTime, store.getOpenTime());
+        assertEquals(closedTime, store.getClosedTime());
+        assertEquals(70000L, store.getMinOrderPrice());
+        assertEquals(category, store.getCategory());
     }
 
     @Test
