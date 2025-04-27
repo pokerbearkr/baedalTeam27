@@ -44,7 +44,11 @@ class CategoryServiceTest {
     void saveCategory_성공() {
         // given
         Long userId = 1L;
-        User user = new User("email", "password", UserRole.ADMIN, "", "");
+        User user = User.builder()
+                .email("email")
+                .password("password")
+                .role(UserRole.ADMIN)
+                .build();
         given(userRepository.getUserByUserId(userId)).willReturn(user);
 
         String name = "한식";
@@ -66,7 +70,11 @@ class CategoryServiceTest {
     void saveCategory_USER인_경우() {
         // given
         Long userId = 1L;
-        User user = new User("email", "password", UserRole.USER, "", "");
+        User user = User.builder()
+                .email("email")
+                .password("password")
+                .role(UserRole.USER)
+                .build();
         given(userRepository.getUserByUserId(userId)).willReturn(user);
         CategoryRequestDto dto = new CategoryRequestDto("한식");
 
@@ -80,7 +88,11 @@ class CategoryServiceTest {
     void saveCategory_OWNER인_경우() {
         // given
         Long userId = 1L;
-        User user = new User("email", "password", UserRole.OWNER, "", "");
+        User user = User.builder()
+                .email("email")
+                .password("password")
+                .role(UserRole.OWNER)
+                .build();
         given(userRepository.getUserByUserId(userId)).willReturn(user);
         CategoryRequestDto dto = new CategoryRequestDto("한식");
 
@@ -115,7 +127,11 @@ class CategoryServiceTest {
         UpdateCategoryRequestDto dto = new UpdateCategoryRequestDto("양식");
 
         Long userId = 1L;
-        User user = new User("email", "password", UserRole.ADMIN, "", "");
+        User user = User.builder()
+                .email("email")
+                .password("password")
+                .role(UserRole.ADMIN)
+                .build();
         given(userRepository.getUserByUserId(userId)).willReturn(user);
 
         // when
@@ -132,7 +148,11 @@ class CategoryServiceTest {
         UpdateCategoryRequestDto dto = new UpdateCategoryRequestDto("양식");
 
         Long userId = 1L;
-        User user = new User("email", "password", UserRole.USER, "", "");
+        User user = User.builder()
+                .email("email")
+                .password("password")
+                .role(UserRole.USER)
+                .build();
         given(userRepository.getUserByUserId(userId)).willReturn(user);
 
         // when
@@ -148,7 +168,11 @@ class CategoryServiceTest {
         UpdateCategoryRequestDto dto = new UpdateCategoryRequestDto("양식");
 
         Long userId = 1L;
-        User user = new User("email", "password", UserRole.OWNER, "", "");
+        User user = User.builder()
+                .email("email")
+                .password("password")
+                .role(UserRole.OWNER)
+                .build();
         given(userRepository.getUserByUserId(userId)).willReturn(user);
 
         // when
@@ -166,7 +190,11 @@ class CategoryServiceTest {
         UpdateCategoryRequestDto dto = new UpdateCategoryRequestDto("한식");
 
         Long userId = 1L;
-        User user = new User("email", "password", UserRole.ADMIN, "", "");
+        User user = User.builder()
+                .email("email")
+                .password("password")
+                .role(UserRole.ADMIN)
+                .build();
         given(userRepository.getUserByUserId(userId)).willReturn(user);
 
         // when
@@ -179,7 +207,11 @@ class CategoryServiceTest {
     void deleteCategory_성공() {
         // given
         Long userId = 1L;
-        User user = new User("email", "password", UserRole.ADMIN, "", "");
+        User user = User.builder()
+                .email("email")
+                .password("password")
+                .role(UserRole.ADMIN)
+                .build();
         given(userRepository.getUserByUserId(userId)).willReturn(user);
 
         Long categoryId = 1L;
@@ -198,7 +230,11 @@ class CategoryServiceTest {
     void deleteCategory_실패_USER인_경우() {
         // given
         Long userId = 1L;
-        User user = new User("email", "password", UserRole.USER, "", "");
+        User user = User.builder()
+                .email("email")
+                .password("password")
+                .role(UserRole.USER)
+                .build();
         given(userRepository.getUserByUserId(userId)).willReturn(user);
 
         Long categoryId = 1L;
@@ -213,7 +249,11 @@ class CategoryServiceTest {
     void deleteCategory_실패_OWNER인_경우() {
         // given
         Long userId = 1L;
-        User user = new User("email", "password", UserRole.OWNER, "", "");
+        User user = User.builder()
+                .email("email")
+                .password("password")
+                .role(UserRole.OWNER)
+                .build();
         given(userRepository.getUserByUserId(userId)).willReturn(user);
 
         Long categoryId = 1L;
