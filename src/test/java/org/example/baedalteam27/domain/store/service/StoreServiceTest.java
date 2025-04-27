@@ -115,6 +115,28 @@ class StoreServiceTest {
     }
 
     @Test
+    void saveStore_실패_소유한_가게의_갯수가_4개이상인_경우() {
+        // given
+        Long userId = 1L;
+        User user = new User("email", "password", UserRole.OWNER, "", "");
+        given(userRepository.getUserByUserId(userId)).willReturn(user);
+
+        Long categoryId = 1L;
+        Category category = new Category("한식");
+        given(categoryRepository.findByIdAndIsDeletedFalseOrElseThrow(categoryId)).willReturn(category);
+
+        LocalTime openTime = LocalTime.parse("16:00:00");
+        LocalTime closedTime = LocalTime.parse("22:00:00");
+        SaveStoreRequestDto dto = new SaveStoreRequestDto("김밥집", "한국", "010", openTime, closedTime, 7000L, categoryId);
+        given(storeRepository.countByUserIdAndIsDeletedFalse(userId)).willReturn(4);
+
+        // when
+        // then
+        CustomException customException = assertThrows(CustomException.class, () -> storeService.saveStore(userId, dto));
+        assertEquals(ErrorCode.STORE_LIMIT_EXCEPTION, customException.getErrorCode());
+    }
+
+    @Test
     void findStores() {
     }
 
