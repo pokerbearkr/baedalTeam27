@@ -56,7 +56,11 @@ class StoreServiceTest {
     void saveStore_성공() {
         // given
         Long userId = 1L;
-        User user = new User("email", "password", UserRole.OWNER, "", "");
+        User user = User.builder()
+                .email("email")
+                .password("password")
+                .role(UserRole.OWNER)
+                .build();
         given(userRepository.getUserByUserId(userId)).willReturn(user);
 
         Long categoryId = 1L;
@@ -87,7 +91,11 @@ class StoreServiceTest {
     void saveStore_실패_USER인_경우() {
         // given
         Long userId = 1L;
-        User user = new User("email", "password", UserRole.USER, "", "");
+        User user = User.builder()
+                .email("email")
+                .password("password")
+                .role(UserRole.USER)
+                .build();
         given(userRepository.getUserByUserId(userId)).willReturn(user);
 
         Long categoryId = 1L;
@@ -108,7 +116,11 @@ class StoreServiceTest {
     void saveStore_실패_ADMIN인_경우() {
         // given
         Long userId = 1L;
-        User user = new User("email", "password", UserRole.ADMIN, "", "");
+        User user = User.builder()
+                .email("email")
+                .password("password")
+                .role(UserRole.ADMIN)
+                .build();
         given(userRepository.getUserByUserId(userId)).willReturn(user);
 
         Long categoryId = 1L;
@@ -129,7 +141,11 @@ class StoreServiceTest {
     void saveStore_실패_소유한_가게의_갯수가_4개이상인_경우() {
         // given
         Long userId = 1L;
-        User user = new User("email", "password", UserRole.OWNER, "", "");
+        User user = User.builder()
+                .email("email")
+                .password("password")
+                .role(UserRole.OWNER)
+                .build();
         given(userRepository.getUserByUserId(userId)).willReturn(user);
 
         Long categoryId = 1L;
@@ -151,7 +167,11 @@ class StoreServiceTest {
     void findStores_성공_카테고리Id로_조회() {
         // given
         Long userId = 1L;
-        User user = new User("email", "password", UserRole.OWNER, "", "");
+        User user = User.builder()
+                .email("email")
+                .password("password")
+                .role(UserRole.OWNER)
+                .build();
         ReflectionTestUtils.setField(user, "id", userId);
 
         Long categoryId = 1L;
@@ -184,7 +204,11 @@ class StoreServiceTest {
     void findStores_성공_가게이름으로_조회() {
         // given
         Long userId = 1L;
-        User user = new User("email", "password", UserRole.OWNER, "", "");
+        User user = User.builder()
+                .email("email")
+                .password("password")
+                .role(UserRole.OWNER)
+                .build();
         ReflectionTestUtils.setField(user, "id", userId);
 
         Long categoryId = 1L;
@@ -217,7 +241,11 @@ class StoreServiceTest {
     void findStores_성공_Param이_null인경우() {
         // given
         Long userId = 1L;
-        User user = new User("email", "password", UserRole.OWNER, "", "");
+        User user = User.builder()
+                .email("email")
+                .password("password")
+                .role(UserRole.OWNER)
+                .build();
         ReflectionTestUtils.setField(user, "id", userId);
 
         Long categoryId = 1L;
@@ -264,7 +292,11 @@ class StoreServiceTest {
         // given
         Category category = new Category("한식");
 
-        User user = new User("email", "password", UserRole.USER, "", "");
+        User user = User.builder()
+                .email("email")
+                .password("password")
+                .role(UserRole.USER)
+                .build();
 
         Long storeId = 1L;
         LocalTime openTime = LocalTime.parse("16:00:00");
@@ -313,7 +345,11 @@ class StoreServiceTest {
     void updateStore_성공() {
         // given
         Long userId = 1L;
-        User user = new User("email", "password", UserRole.OWNER, "", "");
+        User user = User.builder()
+                .email("email")
+                .password("password")
+                .role(UserRole.OWNER)
+                .build();
         ReflectionTestUtils.setField(user, "id", userId);
 
         Long categoryId = 1L;
@@ -344,7 +380,11 @@ class StoreServiceTest {
     void updateStore_실패_가게를_등록한_사장이_아닌경우() {
         // given
         Long userId = 2L;
-        User user = new User("email", "password", UserRole.OWNER, "", "");
+        User user = User.builder()
+                .email("email")
+                .password("password")
+                .role(UserRole.OWNER)
+                .build();
         ReflectionTestUtils.setField(user, "id", 1L);
 
         Long categoryId = 1L;
@@ -367,7 +407,11 @@ class StoreServiceTest {
     void deleteStore_성공() {
         // given
         Long userId = 1L;
-        User user = new User("email", "password", UserRole.OWNER, "", "");
+        User user = User.builder()
+                .email("email")
+                .password("password")
+                .role(UserRole.OWNER)
+                .build();
         ReflectionTestUtils.setField(user, "id", userId);
         given(userRepository.getUserByUserId(userId)).willReturn(user);
 
@@ -391,7 +435,11 @@ class StoreServiceTest {
     void deleteStore_실패_USER인경우() {
         // given
         Long userId = 1L;
-        User user = new User("email", "password", UserRole.USER, "", "");
+        User user = User.builder()
+                .email("email")
+                .password("password")
+                .role(UserRole.USER)
+                .build();
         ReflectionTestUtils.setField(user, "id", userId);
         given(userRepository.getUserByUserId(userId)).willReturn(user);
 
@@ -407,7 +455,11 @@ class StoreServiceTest {
     void deleteStore_실패_ADMIN인경우() {
         // given
         Long userId = 1L;
-        User user = new User("email", "password", UserRole.ADMIN, "", "");
+        User user = User.builder()
+                .email("email")
+                .password("password")
+                .role(UserRole.ADMIN)
+                .build();
         ReflectionTestUtils.setField(user, "id", userId);
         given(userRepository.getUserByUserId(userId)).willReturn(user);
 
@@ -423,8 +475,16 @@ class StoreServiceTest {
     void deleteStore_실패_가게를_등록한_사장이_아닌경우() {
         // given
         Long userId = 1L;
-        User user1 = new User("email", "password", UserRole.OWNER, "", "");
-        User user2 = new User("email", "password", UserRole.OWNER, "", "");
+        User user1 = User.builder()
+                .email("email")
+                .password("password")
+                .role(UserRole.OWNER)
+                .build();
+        User user2 = User.builder()
+                .email("email")
+                .password("password")
+                .role(UserRole.OWNER)
+                .build();
         ReflectionTestUtils.setField(user1, "id", userId);
         ReflectionTestUtils.setField(user2, "id", 2L);
         given(userRepository.getUserByUserId(userId)).willReturn(user1);
@@ -447,7 +507,11 @@ class StoreServiceTest {
     void deleteStore_실패_폐업한_가게를_다시_폐업하려는_경우() {
         // given
         Long userId = 1L;
-        User user = new User("email", "password", UserRole.OWNER, "", "");
+        User user = User.builder()
+                .email("email")
+                .password("password")
+                .role(UserRole.OWNER)
+                .build();
         ReflectionTestUtils.setField(user, "id", userId);
         given(userRepository.getUserByUserId(userId)).willReturn(user);
 
