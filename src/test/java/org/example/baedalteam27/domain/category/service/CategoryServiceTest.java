@@ -7,6 +7,8 @@ import org.example.baedalteam27.domain.category.repository.CategoryRepository;
 import org.example.baedalteam27.domain.user.UserRole;
 import org.example.baedalteam27.domain.user.entitiy.User;
 import org.example.baedalteam27.domain.user.repository.UserRepository;
+import org.example.baedalteam27.global.exception.CustomException;
+import org.example.baedalteam27.global.exception.ErrorCode;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -15,6 +17,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
@@ -54,7 +58,31 @@ class CategoryServiceTest {
     }
 
     @Test
-    void saveCategory_관리자_권한이_아닌_경우() {
+    void saveCategory_USER인_경우() {
+        // given
+        Long userId = 1L;
+        User user = new User("email", "password", UserRole.USER, "", "");
+        given(userRepository.getUserByUserId(userId)).willReturn(user);
+        CategoryRequestDto dto = new CategoryRequestDto("한식");
+
+        // when
+        // then
+        CustomException customException = assertThrows(CustomException.class, () -> categoryService.saveCategory(dto, userId));
+        assertEquals(ErrorCode.NOT_ADMIN, customException.getErrorCode());
+    }
+
+    @Test
+    void saveCategory_OWNER인_경우() {
+        // given
+        Long userId = 1L;
+        User user = new User("email", "password", UserRole.OWNER, "", "");
+        given(userRepository.getUserByUserId(userId)).willReturn(user);
+        CategoryRequestDto dto = new CategoryRequestDto("한식");
+
+        // when
+        // then
+        CustomException customException = assertThrows(CustomException.class, () -> categoryService.saveCategory(dto, userId));
+        assertEquals(ErrorCode.NOT_ADMIN, customException.getErrorCode());
     }
 
     @Test
