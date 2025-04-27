@@ -239,6 +239,19 @@ class StoreServiceTest {
     }
 
     @Test
+    void findStores_살패_Param이_둘다입력받은경우() {
+        // given
+        Long categoryId = 1L;
+        String storeName = "김밥집";
+        Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, "storeName"));
+
+        // when
+        // then
+        CustomException customException = assertThrows(CustomException.class, () -> storeService.findStores(categoryId, storeName, pageable));
+        assertEquals(ErrorCode.INVALID_PARAMETER, customException.getErrorCode());
+    }
+
+    @Test
     void findStore() {
     }
 
