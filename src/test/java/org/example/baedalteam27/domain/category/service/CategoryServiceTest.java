@@ -157,6 +157,24 @@ class CategoryServiceTest {
     }
 
     @Test
+    void updateCategory_실패_중복된_이름인_경우() {
+        // given
+        Long categoryId = 1L;
+        Category category = new Category("한식");
+        given(categoryRepository.findByIdAndIsDeletedFalseOrElseThrow(categoryId)).willReturn(category);
+        UpdateCategoryRequestDto dto = new UpdateCategoryRequestDto("한식");
+
+        Long userId = 1L;
+        User user = new User("email", "password", UserRole.ADMIN, "", "");
+        given(userRepository.getUserByUserId(userId)).willReturn(user);
+
+        // when
+        // then
+        CustomException customException = assertThrows(CustomException.class, () -> categoryService.updateCategory(categoryId, dto, userId));
+        assertEquals(ErrorCode.CATEGORY_NAME_ALREADY_EXISTS, customException.getErrorCode());
+    }
+
+    @Test
     void deleteCategory() {
     }
 }
