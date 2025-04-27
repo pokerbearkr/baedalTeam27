@@ -120,8 +120,24 @@ class CategoryServiceTest {
         // when
         categoryService.updateCategory(categoryId, dto, userId);
 
-        //then
+        // then
         assertEquals("양식", category.getName());
+    }
+
+    @Test
+    void updateCategory_실패_USER인_경우() {
+        // given
+        Long categoryId = 1L;
+        UpdateCategoryRequestDto dto = new UpdateCategoryRequestDto("양식");
+
+        Long userId = 1L;
+        User user = new User("email", "password", UserRole.USER, "", "");
+        given(userRepository.getUserByUserId(userId)).willReturn(user);
+
+        // when
+        // then
+        CustomException customException = assertThrows(CustomException.class, () -> categoryService.updateCategory(categoryId, dto, userId));
+        assertEquals(ErrorCode.NOT_ADMIN, customException.getErrorCode());
     }
 
     @Test
