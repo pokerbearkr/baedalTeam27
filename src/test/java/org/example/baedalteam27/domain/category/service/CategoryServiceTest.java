@@ -1,6 +1,7 @@
 package org.example.baedalteam27.domain.category.service;
 
 import org.example.baedalteam27.domain.category.dto.request.CategoryRequestDto;
+import org.example.baedalteam27.domain.category.dto.request.UpdateCategoryRequestDto;
 import org.example.baedalteam27.domain.category.dto.response.CategoryResponseDto;
 import org.example.baedalteam27.domain.category.dto.response.FindCategoriesResponseDto;
 import org.example.baedalteam27.domain.category.entity.Category;
@@ -105,7 +106,22 @@ class CategoryServiceTest {
     }
 
     @Test
-    void updateCategory() {
+    void updateCategory_성공() {
+        // given
+        Long categoryId = 1L;
+        Category category = new Category("한식");
+        given(categoryRepository.findByIdAndIsDeletedFalseOrElseThrow(categoryId)).willReturn(category);
+        UpdateCategoryRequestDto dto = new UpdateCategoryRequestDto("양식");
+
+        Long userId = 1L;
+        User user = new User("email", "password", UserRole.ADMIN, "", "");
+        given(userRepository.getUserByUserId(userId)).willReturn(user);
+
+        // when
+        categoryService.updateCategory(categoryId, dto, userId);
+
+        //then
+        assertEquals("양식", category.getName());
     }
 
     @Test
