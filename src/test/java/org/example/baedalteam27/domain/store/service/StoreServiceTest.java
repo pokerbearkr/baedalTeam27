@@ -399,4 +399,20 @@ class StoreServiceTest {
         CustomException customException = assertThrows(CustomException.class, () -> storeService.deleteStore(userId, storeId));
         assertEquals(ErrorCode.NOT_OWNER, customException.getErrorCode());
     }
+
+    @Test
+    void deleteStore_실패_ADMIN인경우() {
+        // given
+        Long userId = 1L;
+        User user = new User("email", "password", UserRole.ADMIN, "", "");
+        ReflectionTestUtils.setField(user, "id", userId);
+        given(userRepository.getUserByUserId(userId)).willReturn(user);
+
+        Long storeId = 1L;
+
+        // when
+        // then
+        CustomException customException = assertThrows(CustomException.class, () -> storeService.deleteStore(userId, storeId));
+        assertEquals(ErrorCode.NOT_OWNER, customException.getErrorCode());
+    }
 }
