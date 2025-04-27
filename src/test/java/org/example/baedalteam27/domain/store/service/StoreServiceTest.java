@@ -4,6 +4,7 @@ import org.example.baedalteam27.domain.category.entity.Category;
 import org.example.baedalteam27.domain.category.repository.CategoryRepository;
 import org.example.baedalteam27.domain.store.dto.request.SaveStoreRequestDto;
 import org.example.baedalteam27.domain.store.dto.response.SaveStoreResponseDto;
+import org.example.baedalteam27.domain.store.dto.response.StoreNameResponseDto;
 import org.example.baedalteam27.domain.store.entity.Store;
 import org.example.baedalteam27.domain.store.repository.StoreRepository;
 import org.example.baedalteam27.domain.user.UserRole;
@@ -16,11 +17,16 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.*;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.LocalTime;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.ArgumentMatchers.any;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -137,7 +143,99 @@ class StoreServiceTest {
     }
 
     @Test
-    void findStores() {
+    void findStores_성공_카테고리Id로_조회() {
+        // given
+        Long userId = 1L;
+        User user = new User("email", "password", UserRole.OWNER, "", "");
+        given(userRepository.getUserByUserId(userId)).willReturn(user);
+
+        Long categoryId = 1L;
+        Category category = new Category("한식");
+
+        LocalTime openTime = LocalTime.parse("16:00:00");
+        LocalTime closedTime = LocalTime.parse("22:00:00");
+        Store store1 = new Store("김밥집1", "한국", "010", openTime, closedTime, 7000L, user, category);
+        ReflectionTestUtils.setField(store1, "id", 1L);
+        Store store2 = new Store("김밥집2", "한국", "010", openTime, closedTime, 7000L, user, category);
+        ReflectionTestUtils.setField(store2, "id", 2L);
+
+        List<Store> storeList = Arrays.asList(store1, store2);
+        Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, "storeName"));
+        Page<Store> stores = new PageImpl<>(storeList, pageable, storeList.size());
+        given(storeRepository.findByCategoryIdAndIsDeletedFalse(eq(categoryId), any(Pageable.class))).willReturn(stores);
+
+        // when
+        Page<StoreNameResponseDto> storeNameResponseDtos = storeService.findStores(categoryId, null, pageable);
+
+        // then
+        assertEquals(1L, storeNameResponseDtos.getContent().get(0).getId());
+        assertEquals("김밥집1", storeNameResponseDtos.getContent().get(0).getStoreName());
+        assertEquals(2L, storeNameResponseDtos.getContent().get(1).getId());
+        assertEquals("김밥집2", storeNameResponseDtos.getContent().get(1).getStoreName());
+    }
+
+    @Test
+    void findStores_성공_가게이름으로_조회() {
+        // given
+        Long userId = 1L;
+        User user = new User("email", "password", UserRole.OWNER, "", "");
+        given(userRepository.getUserByUserId(userId)).willReturn(user);
+
+        Long categoryId = 1L;
+        Category category = new Category("한식");
+
+        LocalTime openTime = LocalTime.parse("16:00:00");
+        LocalTime closedTime = LocalTime.parse("22:00:00");
+        Store store1 = new Store("김밥집1", "한국", "010", openTime, closedTime, 7000L, user, category);
+        ReflectionTestUtils.setField(store1, "id", 1L);
+        Store store2 = new Store("김밥집2", "한국", "010", openTime, closedTime, 7000L, user, category);
+        ReflectionTestUtils.setField(store2, "id", 2L);
+
+        List<Store> storeList = Arrays.asList(store1, store2);
+        Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, "storeName"));
+        Page<Store> stores = new PageImpl<>(storeList, pageable, storeList.size());
+        given(storeRepository.findByStoreNameContainingAndIsDeletedFalse(eq("김밥집"), any(Pageable.class))).willReturn(stores);
+
+        // when
+        Page<StoreNameResponseDto> storeNameResponseDtos = storeService.findStores(null, "김밥집", pageable);
+
+        // then
+        assertEquals(1L, storeNameResponseDtos.getContent().get(0).getId());
+        assertEquals("김밥집1", storeNameResponseDtos.getContent().get(0).getStoreName());
+        assertEquals(2L, storeNameResponseDtos.getContent().get(1).getId());
+        assertEquals("김밥집2", storeNameResponseDtos.getContent().get(1).getStoreName());
+    }
+
+    @Test
+    void findStores_성공_Param이_null인경우() {
+        // given
+        Long userId = 1L;
+        User user = new User("email", "password", UserRole.OWNER, "", "");
+        given(userRepository.getUserByUserId(userId)).willReturn(user);
+
+        Long categoryId = 1L;
+        Category category = new Category("한식");
+
+        LocalTime openTime = LocalTime.parse("16:00:00");
+        LocalTime closedTime = LocalTime.parse("22:00:00");
+        Store store1 = new Store("김밥집1", "한국", "010", openTime, closedTime, 7000L, user, category);
+        ReflectionTestUtils.setField(store1, "id", 1L);
+        Store store2 = new Store("김밥집2", "한국", "010", openTime, closedTime, 7000L, user, category);
+        ReflectionTestUtils.setField(store2, "id", 2L);
+
+        List<Store> storeList = Arrays.asList(store1, store2);
+        Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, "storeName"));
+        Page<Store> stores = new PageImpl<>(storeList, pageable, storeList.size());
+        given(storeRepository.findByIsDeletedFalse(any(Pageable.class))).willReturn(stores);
+
+        // when
+        Page<StoreNameResponseDto> storeNameResponseDtos = storeService.findStores(null, null, pageable);
+
+        // then
+        assertEquals(1L, storeNameResponseDtos.getContent().get(0).getId());
+        assertEquals("김밥집1", storeNameResponseDtos.getContent().get(0).getStoreName());
+        assertEquals(2L, storeNameResponseDtos.getContent().get(1).getId());
+        assertEquals("김밥집2", storeNameResponseDtos.getContent().get(1).getStoreName());
     }
 
     @Test
