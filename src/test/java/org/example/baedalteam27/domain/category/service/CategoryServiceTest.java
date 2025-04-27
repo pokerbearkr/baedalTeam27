@@ -175,6 +175,50 @@ class CategoryServiceTest {
     }
 
     @Test
-    void deleteCategory() {
+    void deleteCategory_성공() {
+        // given
+        Long userId = 1L;
+        User user = new User("email", "password", UserRole.ADMIN, "", "");
+        given(userRepository.getUserByUserId(userId)).willReturn(user);
+
+        Long categoryId = 1L;
+        Category category = new Category("한식");
+        given(categoryRepository.findByIdAndIsDeletedFalseOrElseThrow(categoryId)).willReturn(category);
+
+        // when
+        categoryService.deleteCategory(categoryId, userId);
+
+        // then
+        assertTrue(category.isDeleted());
+    }
+
+    @Test
+    void deleteCategory_실패_USER인_경우() {
+        // given
+        Long userId = 1L;
+        User user = new User("email", "password", UserRole.USER, "", "");
+        given(userRepository.getUserByUserId(userId)).willReturn(user);
+
+        Long categoryId = 1L;
+
+        // when
+        // then
+        CustomException customException = assertThrows(CustomException.class, () -> categoryService.deleteCategory(categoryId, userId));
+        assertEquals(ErrorCode.NOT_ADMIN, customException.getErrorCode());
+    }
+
+    @Test
+    void deleteCategory_실패_OWNER인_경우() {
+        // given
+        Long userId = 1L;
+        User user = new User("email", "password", UserRole.OWNER, "", "");
+        given(userRepository.getUserByUserId(userId)).willReturn(user);
+
+        Long categoryId = 1L;
+
+        // when
+        // then
+        CustomException customException = assertThrows(CustomException.class, () -> categoryService.deleteCategory(categoryId, userId));
+        assertEquals(ErrorCode.NOT_ADMIN, customException.getErrorCode());
     }
 }
