@@ -2,19 +2,23 @@ package org.example.baedalteam27.domain.order.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.example.baedalteam27.domain.order.dto.request.OrderRequestDto;
 import org.example.baedalteam27.domain.order.dto.response.OrderResponse;
 import org.example.baedalteam27.domain.order.entity.Order;
 import org.example.baedalteam27.domain.order.entity.OrderDetails;
 import org.example.baedalteam27.domain.order.entity.OrderStatus;
-import org.example.baedalteam27.domain.store.entity.Store;
 import org.example.baedalteam27.domain.order.repository.OrderDetailsRepository;
 import org.example.baedalteam27.domain.shoppingCart.entity.ShoppingCart;
 import org.example.baedalteam27.domain.shoppingCart.repository.ShoppingCartRepository;
 import org.example.baedalteam27.domain.order.repository.OrderRepository;
+import org.example.baedalteam27.domain.user.UserRole;
+import org.example.baedalteam27.domain.user.entitiy.User;
+import org.example.baedalteam27.domain.user.repository.UserRepository;
+import org.example.baedalteam27.global.exception.CustomException;
+import org.example.baedalteam27.global.exception.ErrorCode;
 import org.springframework.stereotype.Service;
 
 
-import org.example.baedalteam27.domain.store.repository.StoreRepository;
 
 
 
@@ -30,21 +34,21 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final OrderDetailsRepository orderDetailsRepository;
     private final ShoppingCartRepository shoppingCartRepository;
-    private final StoreRepository storeRepository;
+    private final UserRepository userRepository;
 
 
     /*
     유저를 매개변수로 받아, 유저의 유일한 장바구니를 호출 -> Order 및 details 테이블 저장 -> 주문 완료 리턴
      */
     @Transactional
-    public void doOrder(Long userId, String deliveryLocation){
+    public void doOrder(Long userId, OrderRequestDto dto){
         List<ShoppingCart> cart = shoppingCartRepository.findByUserIdWithStoreAndMenu(userId);
 
         // 주문 정보 저장
         // ShoppingCart 는 User 와 Store 이 중복 저장돼있음 -> get(아무인덱스)
         Order order = new Order(cart.get(0).getUser(),
                 cart.get(0).getStore(),
-                deliveryLocation,
+                dto.getDeliveryLocation(),
                 LocalDateTime.now(),
                 OrderStatus.PENDING);
 
@@ -79,9 +83,13 @@ public class OrderService {
     }
 
     public ArrayList<OrderResponse> getAllOrdersForStore(Long userId){
-        Store store = storeRepository.findByUserIdAndIsDeletedFalseOrElseThrow(userId);
+        User user = userRepository.getUserByUserId(userId);
+        // 유저가 사장님 권한을 가졌는지 검증
+        if (!user.getRole().equals(UserRole.OWNER)) {
+            throw new CustomException(ErrorCode.NOT_OWNER);
+        }
 
-        List<Order> orders = orderRepository.findOrdersByStoreIdAndOrderStatus(store.getId(), OrderStatus.PENDING);
+        List<Order> orders = orderRepository.findAllByOrderStatus(OrderStatus.PENDING);
 
         ArrayList<OrderResponse> ordersResponses = orders.stream()
                 .map(o -> new OrderResponse(
