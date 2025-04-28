@@ -3,7 +3,6 @@ package org.example.baedalteam27.domain.review.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.example.baedalteam27.domain.order.entity.Order;
-import org.example.baedalteam27.domain.order.repository.OrderDetailsRepository;
 import org.example.baedalteam27.domain.order.repository.OrderRepository;
 import org.example.baedalteam27.domain.review.dto.request.ReviseReviewRequest;
 import org.example.baedalteam27.domain.review.dto.request.WriteReviewRequest;
@@ -57,18 +56,15 @@ public class ReviewService {
         reviewRepository.delete(review);
     }
 
-    public List<ReviewResponse> getAllReviewsAboutStore(Long storeId, Pageable pageable) {
-        Page<Review> storeReview = reviewRepository.findByStoreId(storeId, pageable);
-
-        return storeReview.stream()
-                .map(s -> new ReviewResponse(
-                        s.getStore().getId(),
-                        s.getUser().getId(),
-                        s.getStarScore(),
-                        s.getReviewText(),
-                        s.getImgURL()
-                ))
-                .toList();
+    public Page<ReviewResponse> getAllReviewsAboutStore(Long storeId, Pageable pageable) {
+        return reviewRepository.findByStoreId(storeId, pageable)
+                .map(review -> new ReviewResponse(
+                        review.getStore().getId(),
+                        review.getUser().getId(),
+                        review.getStarScore(),
+                        review.getReviewText(),
+                        review.getImgURL()
+                ));
     }
 
     public void isThisYourReview(Long loginUserId, Long selectUserId){

@@ -1,5 +1,6 @@
 package org.example.baedalteam27.domain.review.controller;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import lombok.RequiredArgsConstructor;
 import org.example.baedalteam27.domain.review.dto.request.ReviseReviewRequest;
@@ -13,7 +14,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController(value="/api")
+@RestController
+@RequestMapping("/api")
 @RequiredArgsConstructor
 public class ReviewController {
     private final ReviewService reviewService;
@@ -26,20 +28,20 @@ public class ReviewController {
         return ResponseEntity.ok().build();
     }
 
-    @PatchMapping("review")
+    @PatchMapping("/review")
     public ResponseEntity<Void> revise(@LoginUser Long userId, @RequestBody ReviseReviewRequest dto){
         reviewService.revise(userId, dto);
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("review/{reviewId}")
+    @DeleteMapping("/review/{reviewId}")
     public ResponseEntity<Void> delete(@LoginUser Long userId, @PathVariable Long reviewId){
         reviewService.delete(userId, reviewId);
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/store/{storeId}/review")
-    public ResponseEntity<List<ReviewResponse>> getAllReviewsAboutStore(@PathVariable Long storeId, Pageable pageable) {
+    public ResponseEntity<Page<ReviewResponse>> getAllReviewsAboutStore(@PathVariable Long storeId, Pageable pageable) {
 
         return ResponseEntity.ok(reviewService.getAllReviewsAboutStore(storeId, pageable));
     }
