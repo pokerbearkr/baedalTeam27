@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -48,6 +49,9 @@ class MenuServiceTest {
     void createMenuTest() {
         // given
         MenuDto menuDto = new MenuDto(1L, "Test Menu", 12000, "Delicious test menu", false);
+        Long storeId = 1L;
+        Store store = Store.builder().storeName("ㅇㅇ").build();
+        ReflectionTestUtils.setField(store, "id", storeId);
         Menu menu = Menu.builder()
                 .store(store)
                 .name(menuDto.getName())
@@ -56,7 +60,8 @@ class MenuServiceTest {
                 .isSoldOut(menuDto.isSoldOut())
                 .build();
 
-        when(storeRepository.findByIdAndIsDeletedFalseOrElseThrow(1L)).thenReturn(store);
+
+        when(storeRepository.findByIdAndIsDeletedFalseOrElseThrow(storeId)).thenReturn(store);
         when(menuRepository.save(any(Menu.class))).thenReturn(menu);
 
         // when
