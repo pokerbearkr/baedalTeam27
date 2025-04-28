@@ -59,11 +59,11 @@ public class OrderService {
                 .map(c -> new OrderDetails(theOrder, c.getMenu(), c.getQuantity()))
                 .collect(Collectors.toCollection(ArrayList::new));
 
-        //TODO: 시간나면 BATCH
+
         orderDetailsRepository.saveAll(orderDetails);
 
         // 주문 했으니까 장바구니 비우기
-        shoppingCartRepository.deleteAll();
+        shoppingCartRepository.deleteAllByUserId(userId);
     }
     /*
     주문 상태를 변경하여 주문 취소, 거절, 승인.
