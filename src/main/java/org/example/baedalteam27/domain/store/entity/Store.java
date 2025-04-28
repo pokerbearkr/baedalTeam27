@@ -66,7 +66,7 @@ public class Store {
     private Category category;
 
     // 메뉴
-    @OneToMany(mappedBy = "store")
+    @OneToMany(mappedBy = "store", fetch = FetchType.LAZY)
     private List<Menu> menus = new ArrayList<>();  // menus null 값 방지 초기화
 
     // 파라미터가 달라지는 여러 생성자를 위해 빌더 적용

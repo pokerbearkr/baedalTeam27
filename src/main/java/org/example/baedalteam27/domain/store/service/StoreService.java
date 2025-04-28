@@ -113,9 +113,9 @@ public class StoreService {
         }
 
         // 전체에서 가게 조회
-        Store store = storeRepository.findByIdAndIsDeletedFalseOrElseThrow(storeId);
+        Store store = storeRepository.findWithMenusByIdAndIsDeletedFalseOrElseThrow(storeId);
 
-        // 메뉴를 MenuResponseDto에 담고 리스트로 변환 (N+1 문제 해결 예정)
+        // 메뉴를 MenuResponseDto에 담고 리스트로 변환 (N+1 문제 해결)
         List<MenuResponseDto> menuDtoList = store.getMenus()
                 .stream()
                 .map(menu -> new MenuResponseDto(

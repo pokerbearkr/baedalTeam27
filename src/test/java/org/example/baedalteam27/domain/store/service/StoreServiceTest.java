@@ -375,7 +375,7 @@ class StoreServiceTest {
                 .category(category)
                 .build();
         ReflectionTestUtils.setField(store, "id", storeId);
-        given(storeRepository.findByIdAndIsDeletedFalseOrElseThrow(storeId)).willReturn(store);
+        given(storeRepository.findWithMenusByIdAndIsDeletedFalseOrElseThrow(storeId)).willReturn(store);
 
         Menu menu = Menu.builder()
                 .store(store)
