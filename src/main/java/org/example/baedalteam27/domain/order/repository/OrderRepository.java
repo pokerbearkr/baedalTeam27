@@ -37,4 +37,6 @@ public interface OrderRepository extends JpaRepository<Order,Long> {
         return findById(id)
                 .orElseThrow(()-> new RuntimeException("주문이 없습니다"));
     }
+
+    List<Order> findAllByOrderStatus(OrderStatus orderStatus);
 }

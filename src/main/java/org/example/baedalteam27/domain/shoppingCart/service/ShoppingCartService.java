@@ -24,7 +24,7 @@ public class ShoppingCartService {
 
     @Transactional
     public void add(Long userId, AddShoppingCartRequest dto){
-        Store store = storeRepository.findByUserIdAndIsDeletedFalseOrElseThrow(userId);
+        Store store = storeRepository.findWithMenusByIdAndIsDeletedFalseOrElseThrow(dto.getStore());
 
         List<Menu> menuList = store.getMenus();
 

@@ -1,6 +1,7 @@
 package org.example.baedalteam27.domain.order.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.example.baedalteam27.domain.order.dto.request.OrderRequestDto;
 import org.example.baedalteam27.domain.order.dto.response.OrderResponse;
 import org.example.baedalteam27.domain.order.entity.OrderStatus;
 import org.example.baedalteam27.global.jwt.LoginUser;
@@ -18,8 +19,8 @@ public class OrderController {
     private final OrderService orderService;
 
     @PostMapping
-    public ResponseEntity<Void> order(@LoginUser Long userId, @RequestBody String deliveryLocation){
-        orderService.doOrder(userId, deliveryLocation);
+    public ResponseEntity<Void> order(@LoginUser Long userId, @RequestBody OrderRequestDto dto){
+        orderService.doOrder(userId, dto);
         return ResponseEntity.ok().build();
     }
 
